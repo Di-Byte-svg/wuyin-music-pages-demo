@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个性化五音养生音乐生成系统</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            background: linear-gradient(135deg, #f4f8f5, #eef4ff);
+            color: #222;
+        }
+
+        .container {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 36px 18px 60px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 22px;
+            padding: 28px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 28px;
+        }
+
+        label {
+            display: block;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 8px;
+        }
+
+        input, select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 14px;
+            font-size: 17px;
+            border-radius: 12px;
+            border: 1px solid #ccc;
+            background: #fafafa;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 28px;
+            padding: 16px;
+            font-size: 20px;
+            font-weight: bold;
+            border: none;
+            border-radius: 16px;
+            background: #2f7d59;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #256747;
+        }
+
+        .result {
+            display: none;
+            margin-top: 26px;
+            padding: 22px;
+            border-radius: 18px;
+            background: #eef8f1;
+            border-left: 6px solid #2f7d59;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-top: 18px;
+        }
+
+        .metric {
+            background: white;
+            padding: 18px;
+            border-radius: 14px;
+            text-align: center;
+            border: 1px solid #dce8df;
+        }
+
+        .metric-title {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 6px;
+            color: #2f7d59;
+        }
+
+        .note {
+            color: #666;
+            line-height: 1.8;
+            font-size: 15px;
+        }
+
+        details {
+            margin-top: 18px;
+            background: #f7f7f7;
+            padding: 14px;
+            border-radius: 12px;
+        }
+
+        summary {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            word-break: break-all;
+            background: #fff;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 13px;
+        }
+
+        audio {
+            width: 100%;
+            margin-top: 18px;
+        }
+
+        .download-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .small-btn {
+            flex: 1;
+            min-width: 220px;
+            text-align: center;
+            text-decoration: none;
+            background: #e8f0ff;
+            color: #23406e;
+            padding: 13px;
+            border-radius: 12px;
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+            line-height: 1.8;
+            margin-top: 26px;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 26px;
+            }
+
+            .metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <div class="card">
+        <h1>🎵 个性化五音养生音乐生成系统</h1>
+        <div class="subtitle">
+            选择当前状态，系统自动推荐适合你的五音养生音乐
+        </div>
+
+        <label for="userId">用户编号 / 姓名</label>
+        <input id="userId" value="user_001">
+
+        <label for="state">你现在的状态是？</label>
+        <select id="state">
+            <option>压力大</option>
+            <option>有点低落</option>
+            <option>比较疲惫</option>
+            <option>普通平稳</option>
+            <option>有点兴奋</option>
+            <option>心情较好</option>
+        </select>
+
+        <label for="goal">你希望音乐达到什么效果？</label>
+        <select id="goal">
+            <option>放松减压</option>
+            <option>助眠</option>
+            <option>冥想静心</option>
+            <option>轻度提神</option>
+            <option>平稳养生</option>
+        </select>
+
+        <label for="activity">你现在的活动状态是？</label>
+        <select id="activity">
+            <option>静坐或躺着</option>
+            <option>轻微走动</option>
+            <option>运动后</option>
+        </select>
+
+        <button onclick="generateMusic()">🎧 生成适合我的音乐</button>
+
+        <div id="result" class="result">
+            <h2>系统推荐</h2>
+
+            <div class="metrics">
+                <div class="metric">
+                    <div class="metric-title">推荐五音</div>
+                    <div id="tone" class="metric-value">羽音</div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-title">五行属性</div>
+                    <div id="element" class="metric-value">水</div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-title">推荐节奏</div>
+                    <div id="bpm" class="metric-value">72 BPM</div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-title">音乐目标</div>
+                    <div id="goalShow" class="metric-value">放松减压</div>
+                </div>
+            </div>
+
+            <p id="description" class="note"></p>
+
+            <audio id="audioPlayer" controls></audio>
+
+            <div class="download-row">
+                <a id="downloadAudio" class="small-btn" download="wuyin_demo.wav">
+                    下载五音示例音频
+                </a>
+
+                <a id="downloadRecord" class="small-btn" download="record.json">
+                    下载本次生成记录
+                </a>
+            </div>
+
+            <details>
+                <summary>后台科研记录信息</summary>
+                <pre id="recordText"></pre>
+            </details>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>系统说明</h2>
+        <p class="note">
+            本页面是一个公网可访问的极简用户端原型。普通用户只需要选择当前状态、音乐目标和活动状态，
+            系统会在后台完成情绪参数估计、五音映射、节奏推荐和示例音频生成。
+        </p>
+        <p class="note">
+            Valence、Arousal、BPM、五音类型等专业参数默认不要求用户填写，只作为后台科研记录保留。
+            完整的 MusicGen 生成版本仍然保留在本地实验环境中运行。
+        </p>
+    </div>
+
+    <div class="footer">
+        五音养生音乐生成系统 · 极简展示版<br>
+        前端静态网页部署，不依赖服务器端 Python 运行环境
+    </div>
+
+</div>
+
+<script>
+    function stateToVA(state) {
+        const mapping = {
+            "压力大": [2.8, 6.2],
+            "有点低落": [2.6, 3.8],
+            "比较疲惫": [3.2, 2.8],
+            "普通平稳": [4.8, 4.2],
+            "有点兴奋": [6.5, 6.5],
+            "心情较好": [6.8, 5.2]
+        };
+
+        return mapping[state] || [4.8, 4.2];
+    }
+
+    function adjustByGoal(valence, arousal, goal) {
+        if (goal === "放松减压") {
+            arousal -= 0.8;
+        } else if (goal === "助眠") {
+            arousal -= 1.2;
+            valence += 0.2;
+        } else if (goal === "冥想静心") {
+            arousal -= 0.6;
+        } else if (goal === "轻度提神") {
+            arousal += 0.6;
+            valence += 0.3;
+        }
+
+        valence = Math.max(1, Math.min(9, valence));
+        arousal = Math.max(1, Math.min(9, arousal));
+
+        return [valence, arousal];
+    }
+
+    function mapValenceToWuyin(valence) {
+        if (valence < 3.0) {
+            return ["羽音", "水", "安静、舒缓、低情绪修复"];
+        } else if (valence < 4.0) {
+            return ["商音", "金", "收敛、平稳、舒缓"];
+        } else if (valence < 5.5) {
+            return ["宫音", "土", "中正、稳定、温和"];
+        } else if (valence < 7.0) {
+            return ["角音", "木", "舒展、生发、轻松"];
+        } else {
+            return ["徵音", "火", "明亮、积极、提振"];
+        }
+    }
+
+    function mapArousalToBPM(arousal) {
+        if (arousal < 3.5) {
+            return 55;
+        } else if (arousal < 5.5) {
+            return 72;
+        } else {
+            return 88;
+        }
+    }
+
+    function buildStyleText(state, goal, activity) {
+        let rhythm = "中等节奏";
+        let volume = "中等音量";
+        let instrument = "古琴、竹笛、柔和弦乐";
+        let description = "平稳、柔和、适合日常养生";
+
+        if (["放松减压", "助眠", "冥想静心"].includes(goal)) {
+            rhythm = "低节奏";
+            volume = "低音量";
+            instrument = "古琴、竹笛、暖色铺底音";
+            description = "舒缓、安静、减少刺激感";
+        }
+
+        if (goal === "轻度提神") {
+            rhythm = "中等偏活跃节奏";
+            volume = "中等音量";
+            instrument = "竹笛、轻柔拨弦、柔和弦乐";
+            description = "轻度提振，但避免过强刺激";
+        }
+
+        if (state === "压力大") {
+            rhythm = "低节奏";
+            volume = "低音量";
+            description = "以放松减压为主，减少鼓点和突变";
+        }
+
+        if (activity === "运动后") {
+            rhythm = "低节奏";
+            description = "帮助运动后恢复和平稳呼吸";
+        }
+
+        return [rhythm, volume, instrument, description];
+    }
+
+    function getToneScale(tone) {
+        const scales = {
+            "宫音": [261.63, 293.66, 329.63, 392.00, 440.00],
+            "商音": [293.66, 329.63, 392.00, 440.00, 523.25],
+            "角音": [329.63, 392.00, 440.00, 523.25, 587.33],
+            "徵音": [392.00, 440.00, 523.25, 587.33, 659.25],
+            "羽音": [440.00, 523.25, 587.33, 659.25, 783.99]
+        };
+
+        return scales[tone] || scales["宫音"];
+    }
+
+    function writeString(view, offset, string) {
+        for (let i = 0; i < string.length; i++) {
+            view.setUint8(offset + i, string.charCodeAt(i));
+        }
+    }
+
+    function createWavBlob(tone, bpm) {
+        const sampleRate = 22050;
+        const durationPerNote = 0.35;
+        const totalNotes = 20;
+        const scale = getToneScale(tone);
+
+        const totalSamples = Math.floor(sampleRate * durationPerNote * totalNotes);
+        const buffer = new ArrayBuffer(44 + totalSamples * 2);
+        const view = new DataView(buffer);
+
+        writeString(view, 0, "RIFF");
+        view.setUint32(4, 36 + totalSamples * 2, true);
+        writeString(view, 8, "WAVE");
+        writeString(view, 12, "fmt ");
+        view.setUint32(16, 16, true);
+        view.setUint16(20, 1, true);
+        view.setUint16(22, 1, true);
+        view.setUint32(24, sampleRate, true);
+        view.setUint32(28, sampleRate * 2, true);
+        view.setUint16(32, 2, true);
+        view.setUint16(34, 16, true);
+        writeString(view, 36, "data");
+        view.setUint32(40, totalSamples * 2, true);
+
+        let offset = 44;
+        let sampleIndex = 0;
+
+        for (let i = 0; i < totalNotes; i++) {
+            const freq = scale[i % scale.length];
+            const noteSamples = Math.floor(sampleRate * durationPerNote);
+            const fadeLength = Math.floor(sampleRate * 0.03);
+
+            for (let n = 0; n < noteSamples && sampleIndex < totalSamples; n++) {
+                const t = n / sampleRate;
+
+                let envelope = 1.0;
+                if (n < fadeLength) {
+                    envelope = n / fadeLength;
+                } else if (n > noteSamples - fadeLength) {
+                    envelope = (noteSamples - n) / fadeLength;
+                }
+
+                let value = 0.28 * envelope * Math.sin(2 * Math.PI * freq * t);
+                value += 0.06 * envelope * Math.sin(2 * Math.PI * freq * 2 * t);
+
+                value = Math.max(-1, Math.min(1, value));
+                view.setInt16(offset, value * 32767, true);
+
+                offset += 2;
+                sampleIndex++;
+            }
+        }
+
+        return new Blob([view], { type: "audio/wav" });
+    }
+
+    function generateMusic() {
+        const userId = document.getElementById("userId").value || "user_001";
+        const state = document.getElementById("state").value;
+        const goal = document.getElementById("goal").value;
+        const activity = document.getElementById("activity").value;
+
+        let [valence, arousal] = stateToVA(state);
+        [valence, arousal] = adjustByGoal(valence, arousal, goal);
+
+        const [tone, element, toneDesc] = mapValenceToWuyin(valence);
+        const bpm = mapArousalToBPM(arousal);
+        const [rhythm, volume, instrument, description] = buildStyleText(state, goal, activity);
+
+        const audioBlob = createWavBlob(tone, bpm);
+        const audioUrl = URL.createObjectURL(audioBlob);
+
+        const now = new Date();
+        const timestamp = now.toISOString().replace(/[-:T.]/g, "").slice(0, 14);
+
+        const record = {
+            time: timestamp,
+            user_id: userId,
+            current_state: state,
+            music_goal: goal,
+            activity: activity,
+            valence: Number(valence.toFixed(2)),
+            arousal: Number(arousal.toFixed(2)),
+            five_tone: tone,
+            element: element,
+            tone_description: toneDesc,
+            bpm: bpm,
+            rhythm_density: rhythm,
+            volume_level: volume,
+            instrument_style: instrument,
+            description: description,
+            note: "公网静态版生成的是五音示例音频；完整 MusicGen 版本保留在本地实验环境中。"
+        };
+
+        const recordText = JSON.stringify(record, null, 4);
+        const recordBlob = new Blob([recordText], { type: "application/json" });
+        const recordUrl = URL.createObjectURL(recordBlob);
+
+        document.getElementById("tone").textContent = tone;
+        document.getElementById("element").textContent = element;
+        document.getElementById("bpm").textContent = bpm + " BPM";
+        document.getElementById("goalShow").textContent = goal;
+
+        document.getElementById("description").textContent =
+            "系统推荐：" + tone + "，风格为" + toneDesc + "。整体音乐倾向：" + description + "。";
+
+        document.getElementById("audioPlayer").src = audioUrl;
+
+        document.getElementById("downloadAudio").href = audioUrl;
+        document.getElementById("downloadAudio").download =
+            userId + "_" + tone + "_" + timestamp + ".wav";
+
+        document.getElementById("downloadRecord").href = recordUrl;
+        document.getElementById("downloadRecord").download =
+            userId + "_" + tone + "_" + timestamp + "_record.json";
+
+        document.getElementById("recordText").textContent = recordText;
+        document.getElementById("result").style.display = "block";
+    }
+</script>
+
+</body>
+</html>
