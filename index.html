@@ -274,7 +274,7 @@ details.acc .acc-body{padding:0 0 14px}
     </div>
 
     <div class="footer">
-      个性化五音养生音乐生成与评估系统 · 学术实验版 v3.0（对齐课题执行计划书）· 纯静态离线运行，不向服务器上传数据<br>
+      个性化五音养生音乐生成与评估系统 · 学术实验版 v3.2（对齐课题执行计划书）· 纯静态离线运行，不向服务器上传数据<br>
       <a id="toResearcher">研究者面板（Theory Mapper / 量表配置 / 客观评估 / 数据汇总）</a>
     </div>
   </div>
@@ -374,7 +374,7 @@ details.acc .acc-body{padding:0 0 14px}
 /* =====================================================================
  * 配置层 CONFIG：所有学术规则集中于此，保证可复现（对应 theory_mapper.py）
  * ===================================================================*/
-const APP_VERSION="wuyin-exp-v3.1";
+const APP_VERSION="wuyin-exp-v3.2";
 const LISTEN_SECONDS=120, BASELINE_STEP=3, LS_KEY="wuyin_trials_v3";
 function fmtTime(s){s=Math.max(0,Math.floor(s));return Math.floor(s/60)+":"+String(s%60).padStart(2,"0");}
 
@@ -649,9 +649,12 @@ async function enterListen(){
   $("rTone").textContent=m.toneRow.tone;$("rElement").textContent=m.toneRow.element+"／"+m.toneRow.organ;$("rBpm").textContent=m.bpm+" BPM";
   $("mapChain").innerHTML=`推理链：状态 <code>${state}</code> → 初始 V/A <code>(${fmt(m.vaInitial[0])}, ${fmt(m.vaInitial[1])})</code> → 目标「<code>${$("goalInput").value}</code>」调整后 <code>(${fmt(m.vaAdjusted[0])}, ${fmt(m.vaAdjusted[1])})</code> → <code>${m.toneRow.tone}（${m.toneRow.element}/对应${m.toneRow.organ}）</code>，节奏 <code>${m.bpm} BPM</code>`;
   $("rSource").innerHTML="<span class='source-tag websynth'>检测中…</span>";$("listenNeed").textContent=fmtTime(LISTEN_SECONDS);
-  const fileUrl=`audio/${m.toneRow.pinyin}_${m.bpm}.mp3`,audio=$("listenAudio");
-  try{const found=await probeFile(fileUrl);
-    if(found){currentAudio={source:"musicgen",file:fileUrl};audio.src=fileUrl;}
+  const pyName=m.toneRow.pinyin,bpmNow=m.bpm,audio=$("listenAudio");
+  // 依次探测 audio/{拼音}_{bpm}.mp3 与 .wav，命中任一即用真音频；都没有才合成兜底
+  let found=null;
+  for(const ext of ["mp3","wav"]){found=await probeFile(`audio/${pyName}_${bpmNow}.${ext}`);if(found)break;}
+  try{
+    if(found){currentAudio={source:"musicgen",file:found};audio.src=found;}
     else{const blob=await synthWuyin(m.toneRow.pinyin,m.bpm,LISTEN_SECONDS);const url=URL.createObjectURL(blob);currentAudio={source:"websynth",file:""};audio.src=url;}
   }catch(e){const blob=await synthWuyin(m.toneRow.pinyin,m.bpm,LISTEN_SECONDS);const url=URL.createObjectURL(blob);currentAudio={source:"websynth",file:""};audio.src=url;}
   $("rSource").innerHTML=currentAudio.source==="musicgen"?"<span class='source-tag musicgen'>MusicGen 预生成音频</span>":"<span class='source-tag websynth'>网页合成兜底</span>";
@@ -745,12 +748,12 @@ function bindResearcher(){
       `输入：HR=${inp.hr||"—"} RMSSD=${inp.hrv||"—"} EDA=${inp.eda||"—"} BP=${inp.sbp||"?"}/${inp.dbp||"?"} SpO2=${inp.spo2||"—"}\n`+
       `辨证：${inp.pattern||"未指定"} / 调理脏腑=${inp.organ||"未指定"} / ${inp.shichen||"时辰未指定"}\n`+
       "———— 计算过程 ————\n"+o.steps.map((s,i)=>(i+1)+". "+s).join("\n")+
-      `\n———— 五音控制向量 ————\n调式=${o.toneRow.tone}（${o.toneRow.pinyin}/${o.toneRow.element}/${o.toneRow.organ}），BPM=${o.bpm}，音色=丝竹为主，和弦=平和级进，音量=中低；对应文件 audio/${o.toneRow.pinyin}_${o.bpm}.mp3`;};
+      `\n———— 五音控制向量 ————\n调式=${o.toneRow.tone}（${o.toneRow.pinyin}/${o.toneRow.element}/${o.toneRow.organ}），BPM=${o.bpm}，音色=丝竹为主，和弦=平和级进，音量=中低；对应文件 audio/${o.toneRow.pinyin}_${o.bpm}.mp3 或 .wav`;};
   // V/A 直演
   $("dbgRun").onclick=()=>{const v=Number($("dbgV").value),a=Number($("dbgA").value);
     if(isNaN(v)||isNaN(a)||v<1||v>9||a<1||a>9){toast("请输入 1–9 的 V/A");return;}
     const tr=CONFIG.valenceTone.find(r=>v<r.max)||CONFIG.valenceTone.at(-1),bpm=(CONFIG.arousalBpm.find(r=>a<r.max)||CONFIG.arousalBpm.at(-1)).bpm;
-    $("dbgOut").innerHTML=`V/A <code>(${fmt(v)},${fmt(a)})</code> → <code>${tr.tone}（${tr.pinyin}/${tr.element}/${tr.organ}）</code>，BPM <code>${bpm}</code>，文件 <code>audio/${tr.pinyin}_${bpm}.mp3</code>；${tr.desc}`;};
+    $("dbgOut").innerHTML=`V/A <code>(${fmt(v)},${fmt(a)})</code> → <code>${tr.tone}（${tr.pinyin}/${tr.element}/${tr.organ}）</code>，BPM <code>${bpm}</code>，文件 <code>audio/${tr.pinyin}_${bpm}.mp3/.wav</code>；${tr.desc}`;};
   // 客观评估
   $("objRun").onclick=async()=>{const tone=$("objTone").value,bpm=Number($("objBpm").value);$("objOut").textContent="合成中…";
     await synthWuyin(tone,bpm,30);const o=objectiveMetrics(lastMelody);

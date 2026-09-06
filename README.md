@@ -69,18 +69,28 @@ wellness-music-aigc/
 
 ## 四、audio/ 音频材料制备规范（阶段 7，本地 MusicGen 完成）
 
-网页按 `audio/{五音拼音}_{BPM}.mp3` 探测，命中即用真音频、否则网页合成兜底。共需 **15 个文件**：
+网页按 `audio/{五音拼音}_{BPM}.mp3` 探测，未命中再自动探测同名 `.wav`，两者命中任一即用真音频、否则网页合成兜底（v3.2 起同时支持 mp3/wav）。共需 **15 个文件**：
 
 | 五音 | 拼音 | 55 BPM | 72 BPM | 88 BPM |
 |---|---|---|---|---|
-| 宫(土/脾) | gong | gong_55.mp3 | gong_72.mp3 | gong_88.mp3 |
-| 商(金/肺) | shang | shang_55.mp3 | … | … |
-| 角(木/肝) | jue | jue_55.mp3 | jue_72.mp3 | jue_88.mp3 |
-| 徵(火/心) | zhi | zhi_55.mp3 | zhi_72.mp3 | zhi_88.mp3 |
-| 羽(水/肾) | yu | yu_55.mp3 | yu_72.mp3 | yu_88.mp3 |
+| 宫(土/脾) | gong | gong_55.wav | gong_72.wav | gong_88.wav |
+| 商(金/肺) | shang | shang_55.wav | … | … |
+| 角(木/肝) | jue | jue_55.wav | jue_72.wav | jue_88.wav |
+| 徵(火/心) | zhi | zhi_55.wav | zhi_72.wav | zhi_88.wav |
+| 羽(水/肾) | yu | yu_55.wav | yu_72.wav | yu_88.wav |
 
-要求：时长 **120 s（约 2 分钟，与 `LISTEN_SECONDS` 一致）**、等响度（建议 -16 LUFS）、**无歌词**、中国五声调式、丝竹/古筝类音色、首尾淡入淡出、统一 44.1 kHz 立体声 MP3。
-生成后用 `evaluator.py` 复核纯净度与节奏指标，填入论文客观结果表。
+要求：时长 **120 s（约 2 分钟，与 `LISTEN_SECONDS` 一致）**、等响度 **-16 LUFS**、**无歌词无人声**、中国五声调式、丝竹/古筝/竹笛类音色、首尾淡入淡出。格式为 MusicGen 原生 **32 kHz WAV**（脚本默认，浏览器与 SPSS 均可读）；若本机 libsndfile 支持，脚本会额外导出同名 MP3，二选一放入 `audio/` 即可。
+
+**一键制备脚本 `generate_wuyin_materials.py`**（离线加载本地 `musicgen-small`，自动完成生成→精确裁到 120 s→淡入淡出→-16 LUFS 等响度→按上表命名→写 `materials_manifest.csv` 溯源清单，支持断点续跑、固定随机种子可复现）：
+
+```bash
+# cuda113 环境（RTX A5000），在脚本所在目录执行
+python generate_wuyin_materials.py --selftest   # 先跑4秒自检，确认环境
+python generate_wuyin_materials.py              # 正式生成15首×120s（已存在自动跳过，可中断续跑）
+python generate_wuyin_materials.py --only jue   # 只生成某一音（3首），便于先试听调提示词
+```
+
+生成后把 15 个音频（及清单）拷入 `website/audio/` 随仓库一起发布；再用 `evaluator.py`（librosa）复核纯净度与节奏稳定性，填入论文客观结果表。
 
 ---
 
