@@ -1,525 +1,790 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>个性化五音养生音乐生成系统</title>
-
-    <style>
-        body {
-            margin: 0;
-            font-family: "Microsoft YaHei", Arial, sans-serif;
-            background: linear-gradient(135deg, #f4f8f5, #eef4ff);
-            color: #222;
-        }
-
-        .container {
-            max-width: 880px;
-            margin: 0 auto;
-            padding: 36px 18px 60px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 22px;
-            padding: 28px;
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
-            margin-bottom: 24px;
-        }
-
-        h1 {
-            text-align: center;
-            font-size: 32px;
-            margin-bottom: 8px;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #666;
-            font-size: 16px;
-            margin-bottom: 28px;
-        }
-
-        label {
-            display: block;
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 20px;
-            margin-bottom: 8px;
-        }
-
-        input, select {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 14px;
-            font-size: 17px;
-            border-radius: 12px;
-            border: 1px solid #ccc;
-            background: #fafafa;
-        }
-
-        button {
-            width: 100%;
-            margin-top: 28px;
-            padding: 16px;
-            font-size: 20px;
-            font-weight: bold;
-            border: none;
-            border-radius: 16px;
-            background: #2f7d59;
-            color: white;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background: #256747;
-        }
-
-        .result {
-            display: none;
-            margin-top: 26px;
-            padding: 22px;
-            border-radius: 18px;
-            background: #eef8f1;
-            border-left: 6px solid #2f7d59;
-        }
-
-        .metrics {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 14px;
-            margin-top: 18px;
-        }
-
-        .metric {
-            background: white;
-            padding: 18px;
-            border-radius: 14px;
-            text-align: center;
-            border: 1px solid #dce8df;
-        }
-
-        .metric-title {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .metric-value {
-            font-size: 28px;
-            font-weight: bold;
-            margin-top: 6px;
-            color: #2f7d59;
-        }
-
-        .note {
-            color: #666;
-            line-height: 1.8;
-            font-size: 15px;
-        }
-
-        details {
-            margin-top: 18px;
-            background: #f7f7f7;
-            padding: 14px;
-            border-radius: 12px;
-        }
-
-        summary {
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        pre {
-            white-space: pre-wrap;
-            word-break: break-all;
-            background: #fff;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 13px;
-        }
-
-        audio {
-            width: 100%;
-            margin-top: 18px;
-        }
-
-        .download-row {
-            display: flex;
-            gap: 12px;
-            margin-top: 16px;
-            flex-wrap: wrap;
-        }
-
-        .small-btn {
-            flex: 1;
-            min-width: 220px;
-            text-align: center;
-            text-decoration: none;
-            background: #e8f0ff;
-            color: #23406e;
-            padding: 13px;
-            border-radius: 12px;
-            font-weight: bold;
-        }
-
-        .footer {
-            text-align: center;
-            color: #777;
-            font-size: 14px;
-            line-height: 1.8;
-            margin-top: 26px;
-        }
-
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 26px;
-            }
-
-            .metrics {
-                grid-template-columns: 1fr;
-            }
-
-            .card {
-                padding: 22px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>个性化五音养生音乐生成与评估系统 · 学术实验版</title>
+<style>
+/* ==================== 设计变量 ==================== */
+:root{
+  --ink:#232826;--primary:#2f6b54;--primary-dark:#245441;--primary-soft:#eaf3ee;
+  --paper:#f6f4ee;--card:#fff;--line:#e3ded2;--muted:#6b7168;
+  --warn-bg:#fbf3e2;--warn-line:#d9a93f;--lock:#9a5b22;--danger:#a8453a;
+  --radius:16px;--shadow:0 8px 28px rgba(35,40,38,.07);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);
+  font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB",sans-serif;font-size:15px;line-height:1.75}
+.wrap{max-width:880px;margin:0 auto;padding:26px 16px 64px}
+.masthead{text-align:center;margin-bottom:18px}
+.masthead .logo-row{display:flex;align-items:center;justify-content:center;gap:10px}
+.masthead h1{font-size:24px;margin:0;color:var(--primary-dark);letter-spacing:.5px}
+.masthead .sub{color:var(--muted);font-size:13.5px;margin-top:6px}
+/* 步骤条 */
+.stepper{display:flex;gap:4px;margin:18px 0 20px}
+.step-dot{flex:1;text-align:center;font-size:12px;color:var(--muted)}
+.step-dot .ball{width:32px;height:32px;border-radius:50%;background:#fff;border:1.5px solid var(--line);
+  color:var(--muted);display:flex;align-items:center;justify-content:center;margin:0 auto 5px;font-weight:bold;font-size:13px;transition:all .2s}
+.step-dot.active .ball{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 0 0 4px var(--primary-soft)}
+.step-dot.done .ball{background:var(--primary-soft);border-color:var(--primary);color:var(--primary-dark)}
+.step-line-label{display:block;line-height:1.3}
+/* 卡片面板 */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:26px;margin-bottom:18px}
+.panel{display:none}.panel.show{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+h2{font-size:19px;margin:0 0 4px;color:var(--primary-dark)}
+.panel .lead{color:var(--muted);font-size:14px;margin:0 0 18px}
+.q{display:block;font-weight:bold;margin:18px 0 8px;font-size:15px}
+.q .req{color:var(--danger);margin-left:3px}
+.q .hint{font-weight:normal;color:var(--muted);font-size:13px;margin-left:6px}
+input[type=text],input[type=number],select,textarea{width:100%;padding:11px 12px;font-size:15px;font-family:inherit;color:var(--ink);
+  border:1px solid #c9c4b8;border-radius:10px;background:#fdfcf9}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary);background:#fff}
+input:disabled,select:disabled,textarea:disabled{background:#f0ede6;color:#8a8578;cursor:not-allowed}
+textarea{resize:vertical;min-height:74px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 12px}
+/* SAM */
+.sam-block{border:1px solid var(--line);border-radius:12px;padding:16px 14px;margin-top:14px;background:#fdfcf9}
+.sam-block .sam-title{font-weight:bold;margin-bottom:2px}
+.sam-block .sam-dim-desc{color:var(--muted);font-size:13px;margin-bottom:10px}
+.sam-scale{display:grid;grid-template-columns:repeat(9,1fr);gap:6px}
+.sam-opt{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:8px 2px 6px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:3px;transition:all .15s;min-height:74px}
+.sam-opt:hover{border-color:var(--primary);background:var(--primary-soft)}
+.sam-opt.sel{border-color:var(--primary);background:var(--primary);color:#fff;box-shadow:0 3px 10px rgba(47,107,84,.25)}
+.sam-opt svg{width:34px;height:34px}.sam-opt .n{font-weight:bold;font-size:13px}
+.sam-anchors{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-top:8px}
+.sam-opt.sel svg path,.sam-opt.sel svg circle,.sam-opt.sel svg line,.sam-opt.sel svg polyline{stroke:#fff}
+/* Likert */
+.likert{display:grid;grid-template-columns:repeat(9,1fr);gap:6px;margin-top:6px}
+.likert button{border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:10px 0;font-size:15px;font-weight:bold;color:var(--muted);cursor:pointer;transition:all .15s}
+.likert button:hover{border-color:var(--primary);color:var(--primary)}
+.likert button.sel{background:var(--primary);border-color:var(--primary);color:#fff}
+.likert-anchors{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-top:6px}
+/* STAI 状态焦虑量表 */
+.scale-head{display:flex;align-items:baseline;gap:10px;margin:20px 0 4px}
+.scale-head h3{margin:0;font-size:16px;color:var(--primary-dark)}
+.scale-head .tag{font-size:12px;color:var(--muted)}
+.stai-table{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:8px}
+.stai-row{display:grid;grid-template-columns:1fr 230px;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid #eee9dd;font-size:14px;background:#fdfcf9}
+.stai-row:last-child{border-bottom:none}
+.stai-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.stai-opts label{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--muted);cursor:pointer;text-align:center;line-height:1.25}
+.stai-opts input{width:auto;accent-color:var(--primary)}
+.stai-progress{font-size:13px;color:var(--muted);margin-top:8px}
+.stai-progress b{color:var(--primary-dark)}
+/* 聆听 */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+.metric{background:var(--primary-soft);border:1px solid #d6e6dc;border-radius:12px;padding:13px 8px;text-align:center}
+.metric .mt{font-size:12.5px;color:var(--muted)}.metric .mv{font-size:21px;font-weight:bold;color:var(--primary-dark);margin-top:3px}
+.source-tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:3px 10px;border-radius:999px;font-weight:bold}
+.source-tag.musicgen{background:#e7f0ea;color:#27604a;border:1px solid #b9d6c5}
+.source-tag.websynth{background:#f3eee3;color:#8a6a2c;border:1px solid #e0d2ad}
+.listen-box{border:1.5px dashed var(--primary);border-radius:12px;padding:18px;text-align:center;background:#fbfdfc;margin-top:14px}
+.listen-box audio{width:100%;margin:8px 0 12px}
+.listen-progress{height:12px;border-radius:999px;background:#e9e5da;overflow:hidden;margin:10px 0 6px}
+.listen-progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--primary),#4f9475);transition:width .3s}
+.listen-meta{font-size:13.5px;color:var(--muted)}.listen-meta b{color:var(--primary-dark)}
+.locktip{margin-top:12px;font-size:13.5px;color:var(--lock);min-height:20px}
+.chain{background:#f7f5ef;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:13.5px;color:#4a4f4b;margin-top:12px;line-height:1.9}
+.chain code,.formula code{background:#ece8dd;padding:1px 6px;border-radius:5px;color:var(--primary-dark);font-family:Consolas,Menlo,monospace}
+.formula{background:#f3f7f4;border:1px solid #d3e3d9;border-radius:10px;padding:12px 14px;font-size:13px;line-height:2;color:#33493f;margin-top:10px;font-family:Consolas,Menlo,monospace;white-space:pre-wrap}
+/* 按钮 */
+.nav{display:flex;gap:12px;margin-top:22px}
+button{font-family:inherit}
+.btn{padding:12px 22px;border-radius:11px;font-size:15px;font-weight:bold;cursor:pointer;border:1px solid transparent}
+.btn-prev{background:#eceae2;color:#4a4f4b;border-color:#d8d3c6}.btn-prev:hover{background:#e3dfd3}
+.btn-next,.btn-primary{background:var(--primary);color:#fff;margin-left:auto}.btn-next:hover,.btn-primary:hover{background:var(--primary-dark)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-ghost{background:#fff;border-color:var(--primary);color:var(--primary)}.btn-ghost:hover{background:var(--primary-soft)}
+.download-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+.dl-btn{flex:1;min-width:200px;text-align:center;text-decoration:none;padding:12px;border-radius:11px;font-weight:bold;background:#e8f0ff;color:#23406e;border:1px solid #c4d6f2;font-size:14px;cursor:pointer}
+.dl-btn.alt{background:#eef7f1;color:#27604a;border-color:#c2e0cf}
+details.acc{border:1px solid var(--line);border-radius:12px;background:#fdfcf9;padding:0 14px;margin-top:14px}
+details.acc summary{cursor:pointer;font-weight:bold;padding:12px 0;color:var(--primary-dark);list-style:none}
+details.acc summary::before{content:"▸ ";color:var(--primary)}details.acc[open] summary::before{content:"▾ "}
+details.acc .acc-body{padding:0 0 14px}
+/* 完成/研究者 */
+.summary-table{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px}
+.summary-table th,.summary-table td{border:1px solid var(--line);padding:8px 10px;text-align:left}
+.summary-table th{background:#f7f5ef;width:38%;color:#4a4f4b;font-weight:normal}
+.note-box{background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:10px;padding:12px 14px;font-size:13.5px;color:#6d5a25;margin-top:14px}
+#researcherView{display:none}
+.cfg-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cfg-card{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fdfcf9;font-size:13.5px}
+.cfg-card h3{margin:0 0 8px;font-size:14.5px;color:var(--primary-dark)}
+.cfg-card table{width:100%;border-collapse:collapse;font-size:13px}
+.cfg-card th,.cfg-card td{border:1px solid var(--line);padding:4px 7px;text-align:center}.cfg-card th{background:#f0ede4}
+.trial-row{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:8px;font-size:13px;display:flex;justify-content:space-between;gap:10px;align-items:center;background:#fdfcf9}
+.trial-row .tid{font-family:Consolas,monospace;color:var(--muted);font-size:12px}
+.kv-inputs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
+.kv-inputs label{font-size:12.5px;color:var(--muted)}
+.footer{text-align:center;color:#908b7e;font-size:12.5px;line-height:1.9;margin-top:26px}
+.footer a{color:var(--primary);cursor:pointer;text-decoration:none}
+.toast{position:fixed;left:50%;bottom:34px;transform:translateX(-50%);background:#2c332f;color:#fff;padding:11px 20px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:99;max-width:90vw}
+.toast.show{opacity:.96}
+@media (max-width:640px){
+  .row2,.cfg-grid{grid-template-columns:1fr}.row3,.kv-inputs{grid-template-columns:1fr}
+  .metrics{grid-template-columns:repeat(2,1fr)}.step-line-label{display:none}
+  .card{padding:20px 16px}.sam-scale,.likert{gap:3px}
+  .sam-opt{min-height:62px;padding:6px 1px}.sam-opt svg{width:27px;height:27px}
+  .stai-row{grid-template-columns:1fr;gap:6px}.stai-opts{max-width:320px}
+  .masthead h1{font-size:19px}
+}
+</style>
 </head>
-
 <body>
-<div class="container">
+<div class="wrap">
 
-    <div class="card">
-        <h1>🎵 个性化五音养生音乐生成系统</h1>
-        <div class="subtitle">
-            选择当前状态，系统自动推荐适合你的五音养生音乐
-        </div>
-
-        <label for="userId">用户编号 / 姓名</label>
-        <input id="userId" value="user_001">
-
-        <label for="state">你现在的状态是？</label>
-        <select id="state">
-            <option>压力大</option>
-            <option>有点低落</option>
-            <option>比较疲惫</option>
-            <option>普通平稳</option>
-            <option>有点兴奋</option>
-            <option>心情较好</option>
-        </select>
-
-        <label for="goal">你希望音乐达到什么效果？</label>
-        <select id="goal">
-            <option>放松减压</option>
-            <option>助眠</option>
-            <option>冥想静心</option>
-            <option>轻度提神</option>
-            <option>平稳养生</option>
-        </select>
-
-        <label for="activity">你现在的活动状态是？</label>
-        <select id="activity">
-            <option>静坐或躺着</option>
-            <option>轻微走动</option>
-            <option>运动后</option>
-        </select>
-
-        <button onclick="generateMusic()">🎧 生成适合我的音乐</button>
-
-        <div id="result" class="result">
-            <h2>系统推荐</h2>
-
-            <div class="metrics">
-                <div class="metric">
-                    <div class="metric-title">推荐五音</div>
-                    <div id="tone" class="metric-value">羽音</div>
-                </div>
-
-                <div class="metric">
-                    <div class="metric-title">五行属性</div>
-                    <div id="element" class="metric-value">水</div>
-                </div>
-
-                <div class="metric">
-                    <div class="metric-title">推荐节奏</div>
-                    <div id="bpm" class="metric-value">72 BPM</div>
-                </div>
-
-                <div class="metric">
-                    <div class="metric-title">音乐目标</div>
-                    <div id="goalShow" class="metric-value">放松减压</div>
-                </div>
-            </div>
-
-            <p id="description" class="note"></p>
-
-            <audio id="audioPlayer" controls></audio>
-
-            <div class="download-row">
-                <a id="downloadAudio" class="small-btn" download="wuyin_demo.wav">
-                    下载五音示例音频
-                </a>
-
-                <a id="downloadRecord" class="small-btn" download="record.json">
-                    下载本次生成记录
-                </a>
-            </div>
-
-            <details>
-                <summary>后台科研记录信息</summary>
-                <pre id="recordText"></pre>
-            </details>
-        </div>
+  <!-- ==================== 参与者视图 ==================== -->
+  <div id="participantView">
+    <div class="masthead">
+      <div class="logo-row">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#2f6b54" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg>
+        <h1>个性化五音养生音乐生成与评估系统</h1>
+      </div>
+      <div class="sub">多模态生理-情绪映射 · 被试内前后测 · SAM + STAI-S 标准量表 · 数据仅用于学术研究</div>
     </div>
+    <div class="stepper" id="stepper"></div>
 
     <div class="card">
-        <h2>系统说明</h2>
-        <p class="note">
-            本页面是一个公网可访问的极简用户端原型。普通用户只需要选择当前状态、音乐目标和活动状态，
-            系统会在后台完成情绪参数估计、五音映射、节奏推荐和示例音频生成。
-        </p>
-        <p class="note">
-            Valence、Arousal、BPM、五音类型等专业参数默认不要求用户填写，只作为后台科研记录保留。
-            完整的 MusicGen 生成版本仍然保留在本地实验环境中运行。
-        </p>
+      <!-- 知情同意 -->
+      <section class="panel" data-consent="1">
+        <h2>研究说明与知情同意</h2>
+        <p class="lead">请在开始前阅读以下内容</p>
+        <p>本研究旨在评估个性化五音（宫、商、角、徵、羽）养生音乐对情绪状态与自主神经活动的调节作用。全程约需 8–10 分钟，包含：基本信息登记、聆听前情绪与状态焦虑自评、约 2 分钟音乐聆听、聆听后同套自评与音乐评价。部分被试将同步采集心率、血压等生理指标。</p>
+        <p><b>参与原则：</b>实验完全自愿、全程匿名，您可随时退出而无需理由。不采集姓名、联系方式，数据以编号保存，仅用于学术分析。聆听时请使用外放或耳机，音量以舒适为宜。</p>
+        <p><b>注意：</b>进入聆听环节后，前面的填写将锁定，且需完整聆听约 2 分钟才能继续，请在安静环境中一次性完成。</p>
+        <label class="q" style="font-weight:normal;display:flex;gap:8px;align-items:flex-start;margin-top:16px;cursor:pointer">
+          <input type="checkbox" id="consentCheck" style="width:auto;margin-top:4px">
+          <span>我已阅读并理解上述内容，同意以匿名方式参与本研究</span>
+        </label>
+        <div class="nav"><button class="btn btn-next" id="consentBtn" disabled>同意并开始</button></div>
+      </section>
+
+      <!-- 第1步 登记 -->
+      <section class="panel" data-step="0">
+        <h2>第一步 · 被试登记</h2>
+        <p class="lead">仅用于分组与统计，不涉及个人身份</p>
+        <label class="q">被试编号<span class="req">*</span><span class="hint">由主试发放，如 S001</span></label>
+        <input type="text" id="subjectId" placeholder="请输入主试提供的编号" autocomplete="off">
+        <div class="row2">
+          <div><label class="q">年龄<span class="req">*</span></label><input type="number" id="age" min="10" max="100" placeholder="如 22"></div>
+          <div><label class="q">性别<span class="req">*</span></label>
+            <select id="gender"><option value="">请选择</option><option>女</option><option>男</option><option>不愿透露</option></select></div>
+        </div>
+        <label class="q">是否接受过系统音乐训练<span class="req">*</span></label>
+        <select id="musicTraining"><option value="">请选择</option><option>无</option><option>业余（1 年以上）</option><option>专业（音乐相关专业/考级）</option></select>
+      </section>
+
+      <!-- 第2步 听前 -->
+      <section class="panel" data-step="1">
+        <h2>第二步 · 聆听前自评（基线）</h2>
+        <p class="lead">请根据<b>此刻、聆听音乐之前</b>的真实感受作答，凭第一感觉，没有对错</p>
+        <div id="preSam"></div>
+        <div id="preStai"></div>
+      </section>
+
+      <!-- 第3步 状态目标 -->
+      <section class="panel" data-step="2">
+        <h2>第三步 · 当前状态与音乐目标</h2>
+        <p class="lead">系统将通过情绪维度与中医五音理论的双重映射为你匹配音乐</p>
+        <label class="q">你现在的状态是？<span class="req">*</span></label>
+        <select id="stateInput"><option value="">请选择</option><option>压力大</option><option>有点低落</option><option>比较疲惫</option><option>普通平稳</option><option>有点兴奋</option><option>心情较好</option></select>
+        <label class="q">你希望音乐达到什么效果？<span class="req">*</span></label>
+        <select id="goalInput"><option value="">请选择</option><option>放松减压</option><option>助眠</option><option>冥想静心</option><option>轻度提神</option><option>平稳养生</option></select>
+        <label class="q">你现在的活动状态是？<span class="req">*</span></label>
+        <select id="activityInput"><option value="">请选择</option><option>静坐或躺着</option><option>轻微走动</option><option>运动后</option></select>
+      </section>
+
+      <!-- 第4步 聆听 -->
+      <section class="panel" data-step="3">
+        <h2>第四步 · 聆听推荐音乐</h2>
+        <p class="lead">请安静完整聆听，听满约 2 分钟后自动解锁下一步</p>
+        <div class="metrics">
+          <div class="metric"><div class="mt">推荐五音</div><div class="mv" id="rTone">—</div></div>
+          <div class="metric"><div class="mt">五行/脏腑</div><div class="mv" id="rElement">—</div></div>
+          <div class="metric"><div class="mt">推荐节奏</div><div class="mv" id="rBpm">—</div></div>
+          <div class="metric"><div class="mt">音频来源</div><div class="mv" id="rSource" style="font-size:13px;display:flex;justify-content:center;align-items:center;height:32px">—</div></div>
+        </div>
+        <div class="listen-box">
+          <audio id="listenAudio" controls preload="auto"></audio>
+          <div class="listen-progress"><i id="listenBar"></i></div>
+          <div class="listen-meta">已有效聆听 <b id="listenSec">0:00</b> / <b id="listenNeed">2:00</b>　·　播放次数 <b id="playCount">0</b></div>
+          <div class="locktip" id="listenLockTip">请点击播放并完整聆听；可重复播放，但快进不会缩短要求时长。</div>
+        </div>
+        <div class="chain" id="mapChain"></div>
+      </section>
+
+      <!-- 第5步 听后 -->
+      <section class="panel" data-step="4">
+        <h2>第五步 · 聆听后自评</h2>
+        <p class="lead">请根据<b>刚听完音乐此刻</b>的感受作答，量表与聆听前完全相同</p>
+        <div id="postSam"></div>
+        <div id="postStai"></div>
+      </section>
+
+      <!-- 第6步 音乐评价 -->
+      <section class="panel" data-step="5">
+        <h2>第六步 · 音乐评价</h2>
+        <p class="lead">对刚才这段音乐本身评价，1 为最低，9 为最高</p>
+        <div id="musicRating"></div>
+        <label class="q">开放备注（选填）<span class="hint">任何感受、联想或不适都可写下</span></label>
+        <textarea id="commentInput" placeholder="如：开头让我有点紧张，中段逐渐放松……"></textarea>
+      </section>
+
+      <!-- 第7步 完成 -->
+      <section class="panel" data-step="6">
+        <h2>第七步 · 完成</h2>
+        <p class="lead">感谢参与，本次试验数据已在本机存档</p>
+        <table class="summary-table" id="finalSummary"></table>
+
+        <details class="acc">
+          <summary>主试补录：客观生理指标（选填，来自手环/血压计）</summary>
+          <div class="acc-body">
+            <p class="q" style="font-size:13.5px;font-weight:normal;color:var(--muted)">聆听前、后各测一次，与本次主观数据按同一 trial 对齐，用于配对检验；未测量可留空。</p>
+            <div class="row2">
+              <div><label class="q">听前 HRV-RMSSD（ms）</label><input type="number" id="preHrv" step="0.1"></div>
+              <div><label class="q">听后 HRV-RMSSD（ms）</label><input type="number" id="postHrv" step="0.1"></div>
+              <div><label class="q">听前 收缩压/舒张压（mmHg）</label>
+                <div class="row2"><input type="number" id="preSbp" placeholder="高压"><input type="number" id="preDbp" placeholder="低压"></div></div>
+              <div><label class="q">听后 收缩压/舒张压（mmHg）</label>
+                <div class="row2"><input type="number" id="postSbp" placeholder="高压"><input type="number" id="postDbp" placeholder="低压"></div></div>
+              <div><label class="q">听前 皮电 EDA（μS）</label><input type="number" id="preEda" step="0.1"></div>
+              <div><label class="q">听后 皮电 EDA（μS）</label><input type="number" id="postEda" step="0.1"></div>
+            </div>
+            <div class="nav" style="margin-top:12px"><button class="btn btn-ghost" id="savePhysio" type="button">把生理指标并入本次记录</button></div>
+          </div>
+        </details>
+
+        <div class="note-box">数据保存在本浏览器本地。被试可下载本次 JSON 交主试；全部完成后由主试在研究者面板导出汇总 CSV（可直接导入 SPSS）。</div>
+        <div class="download-row">
+          <a class="dl-btn" id="dlJson">下载本次记录（JSON）</a>
+          <button class="dl-btn alt" id="nextTrialBtn" type="button">同一被试开始下一轮</button>
+        </div>
+        <div class="nav"><button class="btn btn-ghost" id="newSubjectBtn" type="button">登记新被试（清空全部）</button></div>
+      </section>
+
+      <div class="nav" id="stepNav">
+        <button class="btn btn-prev" id="btnPrev" type="button">上一步</button>
+        <button class="btn btn-next" id="btnNext" type="button">下一步</button>
+      </div>
+      <p class="locktip" id="globalLockTip" style="text-align:right"></p>
     </div>
 
     <div class="footer">
-        五音养生音乐生成系统 · 极简展示版<br>
-        前端静态网页部署，不依赖服务器端 Python 运行环境
+      个性化五音养生音乐生成与评估系统 · 学术实验版 v3.0（对齐课题执行计划书）· 纯静态离线运行，不向服务器上传数据<br>
+      <a id="toResearcher">研究者面板（Theory Mapper / 量表配置 / 客观评估 / 数据汇总）</a>
+    </div>
+  </div>
+
+  <!-- ==================== 研究者视图 ==================== -->
+  <div id="researcherView">
+    <div class="masthead">
+      <h1>研究者面板</h1>
+      <div class="sub">对应课题计划书模块 2「Theory Mapper」与模块 4「闭环评估」· 仅面向主试</div>
     </div>
 
+    <div class="card">
+      <h2>一、精确映射配置（情绪维度路线，被试端使用）</h2>
+      <p class="lead">状态→V/A→目标调整→五音/BPM，规则集中可复现</p>
+      <div class="cfg-grid" id="cfgView"></div>
+    </div>
+
+    <div class="card">
+      <h2>二、Theory Mapper：生理信号 → 五音向量（模块 2 数学映射）</h2>
+      <p class="lead">输入 PhysioNet 口径的生理指标与中医辨证标签，逐步显示归一化、激活/效价指数与五音控制向量的计算过程</p>
+      <div class="row3">
+        <div><label class="q">心率 HR（bpm）</label><input type="number" id="pHr" placeholder="如 72"></div>
+        <div><label class="q">HRV-RMSSD（ms）</label><input type="number" id="pHrv" placeholder="如 28"></div>
+        <div><label class="q">皮电 EDA（μS）</label><input type="number" id="pEda" placeholder="如 6"></div>
+        <div><label class="q">收缩压 SBP</label><input type="number" id="pSbp" placeholder="如 128"></div>
+        <div><label class="q">舒张压 DBP</label><input type="number" id="pDbp" placeholder="如 82"></div>
+        <div><label class="q">血氧 SpO₂（%）</label><input type="number" id="pSpo2" placeholder="如 97"></div>
+      </div>
+      <div class="row3" style="margin-top:6px">
+        <div><label class="q">中医体质</label>
+          <select id="pPattern"><option value="">未指定</option><option>平和质</option><option>气虚质</option><option>阳虚质</option><option>阴虚质</option><option>痰湿质</option><option>湿热质</option><option>血瘀质</option><option>气郁质</option></select></div>
+        <div><label class="q">重点调理脏腑</label>
+          <select id="pOrgan"><option value="">未指定</option><option>肝</option><option>心</option><option>脾</option><option>肺</option><option>肾</option></select></div>
+        <div><label class="q">子午流注时辰</label>
+          <select id="pShichen"><option value="">未指定</option><option>子时 23-1（胆）</option><option>丑时 1-3（肝）</option><option>寅时 3-5（肺）</option><option>辰时 7-9（胃）</option><option>巳时 9-11（脾）</option><option>午时 11-13（心）</option><option>酉时 17-19（肾）</option><option>亥时 21-23（三焦）</option></select></div>
+      </div>
+      <div class="nav" style="margin-top:14px"><button class="btn btn-primary" id="theoryRun" type="button">运行 Theory Mapper</button></div>
+      <div class="formula" id="theoryOut">等待输入生理指标……</div>
+    </div>
+
+    <div class="card">
+      <h2>三、V/A 直演（CNN-LSTM 模型输出接入点）</h2>
+      <p class="lead">模型预测出效价/唤醒度后，从这里直接验证「V/A → 五音/BPM」映射</p>
+      <div class="row2">
+        <div><label class="q">效价 Valence (1–9)</label><input type="number" id="dbgV" min="1" max="9" step="0.1" placeholder="如 2.8"></div>
+        <div><label class="q">唤醒度 Arousal (1–9)</label><input type="number" id="dbgA" min="1" max="9" step="0.1" placeholder="如 5.4"></div>
+      </div>
+      <div class="nav" style="margin-top:14px"><button class="btn btn-primary" id="dbgRun" type="button">运行映射</button></div>
+      <div class="chain" id="dbgOut">等待输入……</div>
+    </div>
+
+    <div class="card">
+      <h2>四、客观评估试算（模块 4-1：音阶纯净度 / 节奏稳定性）</h2>
+      <p class="lead">对当前调式与 BPM 的合成材料计算客观指标；MusicGen 真音频的同口径指标由后端 evaluator.py 用 librosa 计算</p>
+      <div class="row2">
+        <div><label class="q">五音</label>
+          <select id="objTone"><option value="gong">宫音（土/脾）</option><option value="shang">商音（金/肺）</option><option value="jue" selected>角音（木/肝）</option><option value="zhi">徵音（火/心）</option><option value="yu">羽音（水/肾）</option></select></div>
+        <div><label class="q">BPM</label><select id="objBpm"><option>55</option><option selected>72</option><option>88</option></select></div>
+      </div>
+      <div class="nav" style="margin-top:14px"><button class="btn btn-primary" id="objRun" type="button">合成并计算客观指标</button></div>
+      <div class="chain" id="objOut">尚未计算……</div>
+    </div>
+
+    <div class="card">
+      <h2>五、量表配置</h2>
+      <div class="cfg-card">
+        <label style="display:flex;gap:8px;align-items:center;font-weight:normal;cursor:pointer">
+          <input type="checkbox" id="cfgStai" checked> 启用 STAI-S 状态焦虑量表（标准 20 题，听前/听后各一次，自动反向计分，总分 20–80）
+        </label>
+        <label style="display:flex;gap:8px;align-items:center;font-weight:normal;cursor:pointer;margin-top:8px">
+          <input type="checkbox" id="cfgPoms" disabled> 启用 POMS 简式心境量表（需主试取得量表使用授权后，将题目填入源码 CONFIG.poms；默认关闭）
+        </label>
+        <p class="q" style="font-size:13px;font-weight:normal;color:var(--muted);margin-bottom:0">修改开关后请刷新页面；SAM 为必做基线量表，不可关闭。</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>六、试验数据汇总（模块 4-2）</h2>
+      <p class="lead">本浏览器累计存档 <b id="trialCount">0</b> 条（一行一 trial，含 SAM、STAI-S、生理指标与音频来源，SPSS 宽格式）</p>
+      <div id="trialList"></div>
+      <div class="download-row">
+        <button class="dl-btn" id="dlAllCsv" type="button">导出汇总 CSV（SPSS 直读）</button>
+        <button class="dl-btn alt" id="dlAllJson" type="button">导出全部 JSON</button>
+        <button class="dl-btn" id="clearAll" type="button" style="background:#fbecea;color:#8a3b33;border-color:#ecc9c3">清空本机全部记录</button>
+      </div>
+      <div class="note-box">正式分析只纳入 audio_source=musicgen 的记录，websynth 为离线兜底；生理指标做听前后配对样本 t 检验或 Wilcoxon（p&lt;0.05）。</div>
+    </div>
+
+    <div class="footer"><a id="toParticipant">← 返回被试作答页</a></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
 </div>
 
 <script>
-    function stateToVA(state) {
-        const mapping = {
-            "压力大": [2.8, 6.2],
-            "有点低落": [2.6, 3.8],
-            "比较疲惫": [3.2, 2.8],
-            "普通平稳": [4.8, 4.2],
-            "有点兴奋": [6.5, 6.5],
-            "心情较好": [6.8, 5.2]
-        };
+"use strict";
+/* =====================================================================
+ * 配置层 CONFIG：所有学术规则集中于此，保证可复现（对应 theory_mapper.py）
+ * ===================================================================*/
+const APP_VERSION="wuyin-exp-v3.1";
+const LISTEN_SECONDS=120, BASELINE_STEP=3, LS_KEY="wuyin_trials_v3";
+function fmtTime(s){s=Math.max(0,Math.floor(s));return Math.floor(s/60)+":"+String(s%60).padStart(2,"0");}
 
-        return mapping[state] || [4.8, 4.2];
-    }
+const CONFIG={
+  // —— 情绪维度路线（被试端，沿用 DEAP/SAM 1-9 口径与旧版可追溯规则）——
+  stateVA:{"压力大":[2.8,6.2],"有点低落":[2.6,3.8],"比较疲惫":[3.2,2.8],"普通平稳":[4.8,4.2],"有点兴奋":[6.5,6.5],"心情较好":[6.8,5.2]},
+  goalAdjust:{"放松减压":{v:0,a:-0.8},"助眠":{v:0.2,a:-1.2},"冥想静心":{v:0,a:-0.6},"轻度提神":{v:0.3,a:0.6},"平稳养生":{v:0,a:0}},
+  valenceTone:[
+    {max:3.0,tone:"羽音",pinyin:"yu",element:"水",en:"water",organ:"肾",desc:"安静、舒缓、低情绪修复"},
+    {max:4.0,tone:"商音",pinyin:"shang",element:"金",en:"metal",organ:"肺",desc:"收敛、平稳、舒缓"},
+    {max:5.5,tone:"宫音",pinyin:"gong",element:"土",en:"earth",organ:"脾",desc:"中正、稳定、温和"},
+    {max:7.0,tone:"角音",pinyin:"jue",element:"木",en:"wood",organ:"肝",desc:"舒展、生发、轻松"},
+    {max:9.01,tone:"徵音",pinyin:"zhi",element:"火",en:"fire",organ:"心",desc:"明亮、积极、提振"}],
+  arousalBpm:[{max:3.5,bpm:55},{max:5.5,bpm:72},{max:9.01,bpm:88}],
+  scales:{gong:[261.63,293.66,329.63,392,440],shang:[293.66,329.63,392,440,523.25],jue:[329.63,392,440,523.25,587.33],zhi:[392,440,523.25,587.33,659.25],yu:[440,523.25,587.33,659.25,783.99]},
 
-    function adjustByGoal(valence, arousal, goal) {
-        if (goal === "放松减压") {
-            arousal -= 0.8;
-        } else if (goal === "助眠") {
-            arousal -= 1.2;
-            valence += 0.2;
-        } else if (goal === "冥想静心") {
-            arousal -= 0.6;
-        } else if (goal === "轻度提神") {
-            arousal += 0.6;
-            valence += 0.3;
-        }
+  // —— Theory Mapper：PhysioNet 口径成人静息参考基准（论文标定后可改）——
+  physioBase:{hrMean:70,hrSd:15, rmssdLow:20,rmssdHigh:60, edaMean:5,edaSd:4, sbpHi:135,dbpHi:85,spo2Floor:95,
+    wHR:0.5,wEDA:0.3,wHRV:0.2},
+  // 五脏-五音对应（中医五音疗疾理论）
+  organTone:{"肝":"jue","心":"zhi","脾":"gong","肺":"shang","肾":"yu"},
+  // 老师模块2 明确的辨证规则（规则层优先于连续映射）
+  tcmRules:[
+    {match:{pattern:["阳虚质"],hr:"low",bp:"low"},tone:"zhi",reason:"阳虚/心率偏慢/血压偏低 → 徵音属火，补心阳，取较高 BPM"},
+    {match:{pattern:["气郁质"],bp:"hi",state:["压力大"]},tone:"jue",reason:"肝郁气滞/压力/血压偏高 → 角音属木，疏肝理气，中速丝竹"}],
 
-        valence = Math.max(1, Math.min(9, valence));
-        arousal = Math.max(1, Math.min(9, arousal));
+  // —— 量表 ——
+  sam:[
+    {key:"valence",name:"效价 Valence（愉悦度）",desc:"心情从不愉快到愉快的程度",left:"非常不愉快",right:"非常愉快"},
+    {key:"arousal",name:"唤醒度 Arousal（激活度）",desc:"从平静困倦到紧张激动的激活程度",left:"非常平静、困倦",right:"非常紧张、激动"},
+    {key:"dominance",name:"支配度 Dominance（掌控感）",desc:"从受控无助到掌控有影响力",left:"完全受控、无助",right:"完全掌控、有影响力"}],
+  // STAI-S 状态焦虑（Spielberger，1-4 级；reverse 为正性情绪题，需反向计分）
+  staiAnchors:["完全没有","有些","中等","非常明显"],
+  staiReverse:[1,2,5,8,10,11,15,16,19,20],
+  staiItems:["我感到心情平静","我感到安全","我感到紧张","我感到拘谨束缚","我感到安逸轻松","我感到烦乱",
+    "我正烦恼，担心可能发生不幸","我感到悠闲自在","我感到焦虑忧虑","我感到舒适","我有自信心","我觉得神经过敏",
+    "我非常紧张不安","我犹豫不决","我感到轻松","我感到心满意足","我担忧","我感到慌乱","我感觉镇定","我感到愉快"],
+  likert:[
+    {key:"liking",name:"喜好度",left:"非常不喜欢",right:"非常喜欢"},
+    {key:"fit",name:"与当前状态的匹配度",left:"完全不符合",right:"完全符合"},
+    {key:"comfort",name:"听感舒适度",left:"很不舒适",right:"很舒适"},
+    {key:"familiarity",name:"旋律熟悉度",left:"非常陌生",right:"非常熟悉"}],
 
-        return [valence, arousal];
-    }
+  csvCols:["trial_id","subject_id","age","gender","music_training","trial_no","condition","mapper_route",
+    "ts_start","ts_end","pre_valence","pre_arousal","pre_dominance","stai_pre_total",
+    "state_input","goal_input","activity_input","va_initial_v","va_initial_a","va_adjusted_v","va_adjusted_a",
+    "five_tone","element","organ","bpm","audio_source","audio_file","listen_seconds","listen_completed","play_count",
+    "post_valence","post_arousal","post_dominance","stai_post_total",
+    "delta_valence","delta_arousal","delta_dominance","stai_delta",
+    "pre_hrv","post_hrv","pre_sbp","post_sbp","pre_dbp","post_dbp","pre_eda","post_eda",
+    "liking","fit","comfort","familiarity","comment","app_version"]
+};
+const STEP_TITLES=["被试登记","听前自评","状态目标","聆听音乐","听后自评","音乐评价","完成"];
+const ENABLE_STAI = !new URLSearchParams(location.search).has("nostai"); // 默认开，URL 带 ?nostai 关；研究者面板开关写 localStorage
 
-    function mapValenceToWuyin(valence) {
-        if (valence < 3.0) {
-            return ["羽音", "水", "安静、舒缓、低情绪修复"];
-        } else if (valence < 4.0) {
-            return ["商音", "金", "收敛、平稳、舒缓"];
-        } else if (valence < 5.5) {
-            return ["宫音", "土", "中正、稳定、温和"];
-        } else if (valence < 7.0) {
-            return ["角音", "木", "舒展、生发、轻松"];
-        } else {
-            return ["徵音", "火", "明亮、积极、提振"];
-        }
-    }
+/* =====================================================================
+ * 工具
+ * ===================================================================*/
+const $=id=>document.getElementById(id);
+function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),2400);}
+function uuid(){return (crypto.randomUUID?crypto.randomUUID():"t-"+Date.now().toString(16)+"-"+Math.random().toString(16).slice(2,10));}
+function nowIso(){return new Date().toISOString();}
+function clamp9(x){return Math.max(1,Math.min(9,x));}
+function fmt(x){return Number(x).toFixed(2);}
+function num(v){return (v===""||v===null||v===undefined||isNaN(Number(v)))?"":Number(v);}
+function computeMapping(state,goal){
+  const iv=CONFIG.stateVA[state]?CONFIG.stateVA[state][0]:4.8, ia=CONFIG.stateVA[state]?CONFIG.stateVA[state][1]:4.2;
+  const adj=CONFIG.goalAdjust[goal]||{v:0,a:0};
+  const v=clamp9(iv+adj.v), a=clamp9(ia+adj.a);
+  const toneRow=CONFIG.valenceTone.find(r=>v<r.max)||CONFIG.valenceTone.at(-1);
+  const bpm=(CONFIG.arousalBpm.find(r=>a<r.max)||CONFIG.arousalBpm.at(-1)).bpm;
+  return{vaInitial:[iv,ia],vaAdjusted:[v,a],toneRow,bpm};
+}
 
-    function mapArousalToBPM(arousal) {
-        if (arousal < 3.5) {
-            return 55;
-        } else if (arousal < 5.5) {
-            return 72;
-        } else {
-            return 88;
-        }
-    }
+/* =====================================================================
+ * Theory Mapper（模块2）：生理信号 + 中医标签 → 五音控制向量
+ * 显式数学方程，逐步返回中间量
+ * ===================================================================*/
+function theoryMapper(inp){
+  const B=CONFIG.physioBase, steps=[];
+  const z=(x,mean,sd)=> (x===null||x===undefined||x==="")?0:(x-mean)/sd;
+  // 1) 标准化
+  const zHR=z(num(inp.hr),B.hrMean,B.hrSd);
+  const zEDA=z(num(inp.eda),B.edaMean,B.edaSd);
+  let zHRV=0;
+  if(inp.hrv!==""){ // RMSSD 越高越放松 → 反向
+    const t=(num(inp.hrv)-B.rmssdLow)/(B.rmssdHigh-B.rmssdLow); // 0..1 越高越放松
+    zHRV=(0.5-t)*2;
+  }
+  steps.push(`标准化：z_HR=${fmt(zHR)}，z_EDA=${fmt(zEDA)}，z_HRV=${fmt(zHRV)}（RMSSD 已反向）`);
+  // 2) 激活指数 A_phys（1-9）
+  let aRaw=B.wHR*zHR+B.wEDA*zEDA+B.wHRV*zHRV;
+  const A=clamp9(5+2*aRaw);
+  steps.push(`激活指数 A_phys = 5 + 2×(${B.wHR}z_HR + ${B.wEDA}z_EDA + ${B.wHRV}z_HRV) = ${fmt(A)}`);
+  // 3) 效价指数 V_phys：血压偏高/低血氧拉低效价
+  let vPen=0;
+  if(inp.sbp!==""&&num(inp.sbp)>B.sbpHi) vPen-=0.8;
+  if(inp.dbp!==""&&num(inp.dbp)>B.dbpHi) vPen-=0.4;
+  if(inp.spo2!==""&&num(inp.spo2)<B.spo2Floor) vPen-=1.2;
+  const V=clamp9(5+vPen+ (inp.pattern==="气郁质"?-1.2:0)+(inp.pattern==="阳虚质"?-0.6:0));
+  steps.push(`效价指数 V_phys = 5 + 血压/血氧偏离修正(${fmt(vPen)}) + 辨证修正 = ${fmt(V)}`);
+  // 4) 规则层（中医辨证优先）
+  let toneRow=null, ruleHit=null;
+  for(const r of CONFIG.tcmRules){
+    const pm=!r.match.pattern||r.match.pattern.includes(inp.pattern);
+    const hrOK=!r.match.hr||(r.match.hr==="low"&&inp.hr!==""&&num(inp.hr)<60);
+    const bpOK=!r.match.bp||(r.match.bp==="low"&&inp.sbp!==""&&num(inp.sbp)<100)||(r.match.bp==="hi"&&inp.sbp!==""&&num(inp.sbp)>B.sbpHi);
+    if(pm&&hrOK&&bpOK){ruleHit=r;break;}
+  }
+  // 脏腑当令优先（子午流注/重点调理）
+  let organTone=null;
+  if(inp.organ) organTone=CONFIG.organTone[inp.organ];
+  if(ruleHit){toneRow=CONFIG.valenceTone.find(x=>x.pinyin===ruleHit.tone);steps.push("规则层命中："+ruleHit.reason);}
+  else if(organTone){toneRow=CONFIG.valenceTone.find(x=>x.pinyin===organTone);steps.push(`脏腑映射：调理「${inp.organ}」→ ${toneRow.tone}`);}
+  else {toneRow=CONFIG.valenceTone.find(x=>V<x.max)||CONFIG.valenceTone.at(-1);steps.push("连续层：按 V_phys 阈值确定五音");}
+  // 5) BPM
+  let bpm=(CONFIG.arousalBpm.find(x=>A<x.max)||CONFIG.arousalBpm.at(-1)).bpm;
+  if(ruleHit&&ruleHit.tone==="zhi") bpm=Math.max(bpm,88);
+  steps.push(`节奏：按 A_phys=${fmt(A)} → ${bpm} BPM（火行提振规则下不低于 88）`);
+  return {V,A,toneRow,bpm,steps};
+}
 
-    function buildStyleText(state, goal, activity) {
-        let rhythm = "中等节奏";
-        let volume = "中等音量";
-        let instrument = "古琴、竹笛、柔和弦乐";
-        let description = "平稳、柔和、适合日常养生";
+/* =====================================================================
+ * SAM 自绘图形（规避官方 SAM 人形版权）
+ * ===================================================================*/
+function samFace(v){const s=(v-5)/4,my=29-s*7;return `<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="24" cy="24" r="19"/><circle cx="18" cy="20" r="1.8" fill="currentColor"/><circle cx="30" cy="20" r="1.8" fill="currentColor"/><path d="M15 ${my} Q24 ${my-s*9} 33 ${my}"/></svg>`;}
+function starPath(cx,cy,o,inner,n){let d="",f=true;for(let i=0;i<n*2;i++){const r=i%2?inner:o,a=Math.PI*i/n-Math.PI/2;d+=(f?"M":"L")+(cx+r*Math.cos(a)).toFixed(1)+" "+(cy+r*Math.sin(a)).toFixed(1)+" ";f=false;}return d+"Z";}
+function samArousal(v){const r=2+(v-1)/8*9;return `<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><circle cx="24" cy="15" r="7"/><path d="M24 27v14M16 32h16"/><path d="${starPath(24,24,r,r*.42,8)}"/></svg>`;}
+function samDominance(v){const h=10+(v-1)/8*16;return `<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="24" cy="${40-h-5}" r="5"/><path d="M24 ${40-h}v${h}M24 ${40-h+5}l-7 7M24 ${40-h+5}l7 7"/></svg>`;}
+const SAM_DRAW={valence:samFace,arousal:samArousal,dominance:samDominance};
+const answers={pre:{},post:{},rating:{},staiPre:{},staiPost:{}};
 
-        if (["放松减压", "助眠", "冥想静心"].includes(goal)) {
-            rhythm = "低节奏";
-            volume = "低音量";
-            instrument = "古琴、竹笛、暖色铺底音";
-            description = "舒缓、安静、减少刺激感";
-        }
+function renderSam(cid,phase){
+  const box=$(cid);box.innerHTML="";
+  CONFIG.sam.forEach(dim=>{
+    let opts="";for(let n=1;n<=9;n++)opts+=`<button type="button" class="sam-opt" data-dim="${dim.key}" data-val="${n}">${SAM_DRAW[dim.key](n)}<span class="n">${n}</span></button>`;
+    const b=document.createElement("div");b.className="sam-block";
+    b.innerHTML=`<div class="sam-title">${dim.name}</div><div class="sam-dim-desc">${dim.desc}</div><div class="sam-scale">${opts}</div><div class="sam-anchors"><span>1　${dim.left}</span><span>${dim.right}　9</span></div>`;
+    box.appendChild(b);
+  });
+  box.querySelectorAll(".sam-opt").forEach(btn=>btn.addEventListener("click",()=>{
+    answers[phase][btn.dataset.dim]=Number(btn.dataset.val);
+    box.querySelectorAll(`.sam-opt[data-dim="${btn.dataset.dim}"]`).forEach(x=>x.classList.toggle("sel",x===btn));
+  }));
+}
+function renderLikert(){
+  const box=$("musicRating");box.innerHTML="";
+  CONFIG.likert.forEach(it=>{
+    let b="";for(let n=1;n<=9;n++)b+=`<button type="button" data-k="${it.key}" data-v="${n}">${n}</button>`;
+    const blk=document.createElement("div");blk.className="sam-block";
+    blk.innerHTML=`<div class="sam-title">${it.name}</div><div class="likert">${b}</div><div class="likert-anchors"><span>1　${it.left}</span><span>${it.right}　9</span></div>`;
+    box.appendChild(blk);
+  });
+  box.querySelectorAll(".likert button").forEach(b=>b.addEventListener("click",()=>{
+    answers.rating[b.dataset.k]=Number(b.dataset.v);
+    box.querySelectorAll(`.likert button[data-k="${b.dataset.k}"]`).forEach(x=>x.classList.toggle("sel",x===b));
+  }));
+}
+/* STAI-S 渲染与计分（反向题重编码） */
+function staiEnabled(){ const v=localStorage.getItem("wuyin_stai"); return v===null?ENABLE_STAI:v==="1"; }
+function renderStai(cid,store){
+  const box=$(cid);
+  if(!staiEnabled()){box.innerHTML="";return;}
+  let rows=CONFIG.staiItems.map((t,i)=>{
+    const no=i+1;
+    let opts=CONFIG.staiAnchors.map((a,k)=>`<label><input type="radio" name="${cid}_${no}" data-no="${no}" value="${k+1}"><span>${a}</span></label>`).join("");
+    return `<div class="stai-row"><span>${no}. ${t}${CONFIG.staiReverse.includes(no)?" <span style='color:#9a5b22'>（反向计分）</span>":""}</span><div class="stai-opts">${opts}</div></div>`;
+  }).join("");
+  box.innerHTML=`<div class="scale-head"><h3>状态焦虑量表 STAI-S（此刻状态）</h3><span class="tag">Spielberger 状态版 · 1–4 级 · 共 20 题</span></div>
+    <div class="stai-table">${rows}</div><div class="stai-progress">已完成 <b id="${cid}Done">0</b> / 20 题　·　当前总分 <b id="${cid}Score">—</b></div>`;
+  box.querySelectorAll("input[type=radio]").forEach(r=>r.addEventListener("change",()=>{
+    store[Number(r.dataset.no)]=Number(r.value);
+    $(cid+"Done").textContent=Object.keys(store).length;
+    $(cid+"Score").textContent=Object.keys(store).length===20?staiScore(store):"—";
+  }));
+}
+function staiScore(store){
+  if(Object.keys(store).length<20)return null;
+  let s=0;for(let n=1;n<=20;n++){let x=store[n];if(CONFIG.staiReverse.includes(n))x=5-x;s+=x;}return s; // 20-80
+}
 
-        if (goal === "轻度提神") {
-            rhythm = "中等偏活跃节奏";
-            volume = "中等音量";
-            instrument = "竹笛、轻柔拨弦、柔和弦乐";
-            description = "轻度提振，但避免过强刺激";
-        }
+/* =====================================================================
+ * 双引擎：audio/ 真音频优先，Web Audio 五声调式合成兜底（严格按 BPM）
+ * ===================================================================*/
+function probeFile(url){return new Promise(res=>{const a=new Audio();let done=false;
+  const fin=ok=>{if(!done){done=true;res(ok?url:null);}};
+  a.addEventListener("canplay",()=>fin(true),{once:true});a.addEventListener("error",()=>fin(false),{once:true});
+  setTimeout(()=>fin(false),1800);a.src=url;});}
+let lastMelody=null;
+async function synthWuyin(pinyin,bpm,seconds){
+  seconds=seconds||LISTEN_SECONDS;const SR=22050;
+  const off=new (window.OfflineAudioContext||window.webkitOfflineAudioContext)(1,SR*seconds,SR);
+  const master=off.createGain();master.gain.value=.42;
+  const lp=off.createBiquadFilter();lp.type="lowpass";lp.frequency.value=1700;master.connect(lp);lp.connect(off.destination);
+  const scale=CONFIG.scales[pinyin],root=scale[0]/2,pool=[root].concat(scale).concat([scale[0]*2]);
+  const beat=60/bpm;let seed=0;for(const c of pinyin)seed=(seed*31+c.charCodeAt(0))%997;
+  const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;};
+  const note=(t0,dur,f,vol)=>{const o=off.createOscillator(),g=off.createGain(),o2=off.createOscillator(),g2=off.createGain();
+    o.type="triangle";o.frequency.value=f;o2.type="sine";o2.frequency.value=f*2;g2.gain.value=.18;
+    g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol,t0+.025);g.gain.exponentialRampToValueAtTime(.0008,t0+dur*.98);
+    o.connect(g);o2.connect(g2);g2.connect(g);g.connect(master);o.start(t0);o2.start(t0);o.stop(t0+dur);o2.stop(t0+dur);};
+  (function(){const o=off.createOscillator(),g=off.createGain();o.type="sine";o.frequency.value=root;g.gain.value=.05;o.connect(g);g.connect(master);o.start(0);o.stop(seconds);})();
+  const onsets=[],freqs=[];let idx=1,t=0,bar=0;const durs=[beat*.5,beat,beat,beat*2];
+  while(t<seconds-beat*2){const step=[-1,1,-2,1,1,0][Math.floor(rnd()*6)];idx=Math.max(1,Math.min(pool.length-2,idx+step));if(bar%4===0)idx=1;
+    const dur=durs[Math.floor(rnd()*durs.length)];note(t,dur,pool[idx],.16);onsets.push(t);freqs.push(pool[idx]);t+=dur;bar+=dur/beat;}
+  note(t,seconds-t,scale[0],.18);onsets.push(t);freqs.push(scale[0]);
+  const rendered=await off.startRendering();
+  lastMelody={pinyin,bpm,onsets,freqs,duration:seconds,scale,pool:pool.slice()};
+  return pcmToWav(rendered,SR);
+}
+function pcmToWav(ab,sr){const n=ab.length,data=ab.getChannelData(0),buf=new ArrayBuffer(44+n*2),v=new DataView(buf);
+  const ws=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};
+  ws(0,"RIFF");v.setUint32(4,36+n*2,!0);ws(8,"WAVE");ws(12,"fmt ");v.setUint32(16,16,!0);v.setUint16(20,1,!0);v.setUint16(22,1,!0);
+  v.setUint32(24,sr,!0);v.setUint32(28,sr*2,!0);v.setUint16(32,2,!0);v.setUint16(34,16,!0);ws(36,"data");v.setUint32(40,n*2,!0);
+  let o=44;for(let i=0;i<n;i++){v.setInt16(o,Math.max(-1,Math.min(1,data[i]))*32767,!0);o+=2;}
+  return new Blob([buf],{type:"audio/wav"});}
+/* 客观指标：五声音阶纯净度 + 节奏稳定性（onset 间隔变异系数） */
+function objectiveMetrics(mel){
+  const tol=0.6; // 半音容差
+  // 纯净度：音符是否落在该调式自身音池（含低/高八度主音），按八度等价匹配
+  const pool=mel.pool||mel.scale;
+  let inSet=0;
+  mel.freqs.forEach(f=>{let hit=false;
+    for(const p of pool){const semi=12*Math.log2(f/p),oct=Math.round(semi/12)*12;
+      if(Math.abs(semi-oct)<tol){hit=true;break;}}
+    if(hit)inSet++;});
+  const purity=inSet/mel.freqs.length;
+  const iv=[];for(let i=1;i<mel.onsets.length;i++)iv.push(mel.onsets[i]-mel.onsets[i-1]);
+  const mean=iv.reduce((a,b)=>a+b,0)/iv.length;
+  const sd=Math.sqrt(iv.reduce((a,b)=>a+(b-mean)**2,0)/iv.length);
+  const cv=sd/mean, stability=1-Math.min(1,cv);
+  return{purity,cv,stability,meanBeat:mean,notes:mel.freqs.length};
+}
 
-        if (state === "压力大") {
-            rhythm = "低节奏";
-            volume = "低音量";
-            description = "以放松减压为主，减少鼓点和突变";
-        }
+/* =====================================================================
+ * 七步状态机
+ * ===================================================================*/
+let current=-1,maxReached=0;
+const trial={};
+let listenState={accumulated:0,lastTs:0,playCount:0,completed:false,timer:null};
+let currentAudio=null;
+function renderStepper(){const box=$("stepper");box.innerHTML="";
+  STEP_TITLES.forEach((name,i)=>{const d=document.createElement("div");
+    d.className="step-dot"+(i===current?" active":i<maxReached?" done":"");
+    d.innerHTML=`<div class="ball">${i<maxReached&&i!==current?"✓":i+1}</div><span class="step-line-label">${name}</span>`;box.appendChild(d);});}
+function show(step){current=step;
+  document.querySelector("section.panel[data-consent]").classList.remove("show");
+  document.querySelectorAll("section.panel[data-step]").forEach(p=>p.classList.toggle("show",Number(p.dataset.step)===step));
+  $("stepNav").style.display=step===-1?"none":"flex";maxReached=Math.max(maxReached,step);
+  $("btnPrev").disabled=step<=0;
+  $("btnNext").textContent=step===6?"已是最后一步":step===5?"提交并生成记录":"下一步";
+  $("btnNext").disabled=(step===6)||(step===3&&!listenState.completed);
+  renderStepper();applyLock();window.scrollTo(0,0);}
+function showConsent(){current=-1;document.querySelectorAll("section.panel[data-step]").forEach(p=>p.classList.remove("show"));
+  document.querySelector("section.panel[data-consent]").classList.add("show");$("stepNav").style.display="none";renderStepper();window.scrollTo(0,0);}
+function validate(step){
+  if(step===0){if(!$("subjectId").value.trim())return"请填写被试编号";const a=Number($("age").value);
+    if(!$("age").value||a<10||a>100)return"请填写有效年龄（10–100）";if(!$("gender").value)return"请选择性别";if(!$("musicTraining").value)return"请选择音乐训练情况";}
+  if(step===1){for(const d of CONFIG.sam)if(!answers.pre[d.key])return"请完成聆听前「"+d.name+"」";
+    if(staiEnabled()&&staiScore(answers.staiPre)===null)return"请完成聆听前 STAI-S 全部 20 题";}
+  if(step===2){if(!$("stateInput").value)return"请选择当前状态";if(!$("goalInput").value)return"请选择音乐效果";if(!$("activityInput").value)return"请选择活动状态";}
+  if(step===3){if(!listenState.completed)return"请完整聆听约 2 分钟后再继续";}
+  if(step===4){for(const d of CONFIG.sam)if(!answers.post[d.key])return"请完成聆听后「"+d.name+"」";
+    if(staiEnabled()&&staiScore(answers.staiPost)===null)return"请完成聆听后 STAI-S 全部 20 题";}
+  if(step===5){for(const it of CONFIG.likert)if(!answers.rating[it.key])return"请完成音乐评价「"+it.name+"」";}
+  return"";}
+function applyLock(){const locked=maxReached>=BASELINE_STEP;
+  for(let s=0;s<BASELINE_STEP;s++)document.querySelector(`section.panel[data-step="${s}"]`).querySelectorAll("input,select,textarea").forEach(el=>el.disabled=locked);
+  $("globalLockTip").textContent=locked?"已进入聆听环节，登记信息与听前基线已锁定，不可修改":"";}
+async function enterListen(){
+  const state=$("stateInput").value,m=computeMapping(state,$("goalInput").value);trial.mapping=m;
+  $("rTone").textContent=m.toneRow.tone;$("rElement").textContent=m.toneRow.element+"／"+m.toneRow.organ;$("rBpm").textContent=m.bpm+" BPM";
+  $("mapChain").innerHTML=`推理链：状态 <code>${state}</code> → 初始 V/A <code>(${fmt(m.vaInitial[0])}, ${fmt(m.vaInitial[1])})</code> → 目标「<code>${$("goalInput").value}</code>」调整后 <code>(${fmt(m.vaAdjusted[0])}, ${fmt(m.vaAdjusted[1])})</code> → <code>${m.toneRow.tone}（${m.toneRow.element}/对应${m.toneRow.organ}）</code>，节奏 <code>${m.bpm} BPM</code>`;
+  $("rSource").innerHTML="<span class='source-tag websynth'>检测中…</span>";$("listenNeed").textContent=fmtTime(LISTEN_SECONDS);
+  const fileUrl=`audio/${m.toneRow.pinyin}_${m.bpm}.mp3`,audio=$("listenAudio");
+  try{const found=await probeFile(fileUrl);
+    if(found){currentAudio={source:"musicgen",file:fileUrl};audio.src=fileUrl;}
+    else{const blob=await synthWuyin(m.toneRow.pinyin,m.bpm,LISTEN_SECONDS);const url=URL.createObjectURL(blob);currentAudio={source:"websynth",file:""};audio.src=url;}
+  }catch(e){const blob=await synthWuyin(m.toneRow.pinyin,m.bpm,LISTEN_SECONDS);const url=URL.createObjectURL(blob);currentAudio={source:"websynth",file:""};audio.src=url;}
+  $("rSource").innerHTML=currentAudio.source==="musicgen"?"<span class='source-tag musicgen'>MusicGen 预生成音频</span>":"<span class='source-tag websynth'>网页合成兜底</span>";
+  resetListenMeter();}
+function resetListenMeter(){listenState={accumulated:0,lastTs:0,playCount:0,completed:false,timer:null};
+  $("listenSec").textContent="0:00";$("playCount").textContent="0";$("listenBar").style.width="0%";
+  $("listenLockTip").textContent="请点击播放并完整聆听；可重复播放，但快进不会缩短要求时长。";
+  if(current===3)$("btnNext").disabled=true;}
+function bindListenMeter(){const audio=$("listenAudio");
+  audio.addEventListener("play",()=>{listenState.lastTs=Date.now();listenState.playCount++;$("playCount").textContent=listenState.playCount;
+    if(listenState.timer)clearInterval(listenState.timer);listenState.timer=setInterval(tick,250);});
+  const pause=()=>{tick();listenState.lastTs=0;if(listenState.timer)clearInterval(listenState.timer);};
+  audio.addEventListener("pause",pause);audio.addEventListener("ended",pause);
+  function tick(){if(!listenState.lastTs)return;const now=Date.now(),dt=(now-listenState.lastTs)/1000;listenState.lastTs=now;
+    if(!audio.paused&&dt<1)listenState.accumulated+=dt;if(listenState.accumulated>LISTEN_SECONDS)listenState.accumulated=LISTEN_SECONDS;
+    $("listenSec").textContent=fmtTime(listenState.accumulated);$("listenBar").style.width=listenState.accumulated/LISTEN_SECONDS*100+"%";
+    if(listenState.accumulated>=LISTEN_SECONDS&&!listenState.completed){listenState.completed=true;$("listenLockTip").textContent="聆听完成，可以进入下一步。";if(current===3)$("btnNext").disabled=false;toast("聆听完成");}}}
+function nextStep(){const err=validate(current);if(err){toast(err);return;}
+  if(current===5){finishTrial();show(6);return;}
+  const go=current+1;if(go===BASELINE_STEP)enterListen();show(go);}
+function prevStep(){if(current>0)show(current-1);}
 
-        if (activity === "运动后") {
-            rhythm = "低节奏";
-            description = "帮助运动后恢复和平稳呼吸";
-        }
+/* =====================================================================
+ * 数据层
+ * ===================================================================*/
+function buildRecord(){const m=trial.mapping,pre=answers.pre,post=answers.post,r=answers.rating,x={};
+  x.trial_id=trial.trialId;x.subject_id=$("subjectId").value.trim();x.age=Number($("age").value);x.gender=$("gender").value;x.music_training=$("musicTraining").value;
+  x.trial_no=trial.trialNo;x.condition=trial.condition;x.mapper_route="emotion_va";
+  x.ts_start=trial.tsStart;x.ts_end=nowIso();
+  x.pre_valence=pre.valence;x.pre_arousal=pre.arousal;x.pre_dominance=pre.dominance;x.stai_pre_total=staiEnabled()?staiScore(answers.staiPre):"";
+  x.state_input=$("stateInput").value;x.goal_input=$("goalInput").value;x.activity_input=$("activityInput").value;
+  x.va_initial_v=Number(fmt(m.vaInitial[0]));x.va_initial_a=Number(fmt(m.vaInitial[1]));x.va_adjusted_v=Number(fmt(m.vaAdjusted[0]));x.va_adjusted_a=Number(fmt(m.vaAdjusted[1]));
+  x.five_tone=m.toneRow.pinyin;x.element=m.toneRow.en;x.organ=m.toneRow.organ;x.bpm=m.bpm;
+  x.audio_source=currentAudio.source;x.audio_file=currentAudio.file;
+  x.listen_seconds=Number(listenState.accumulated.toFixed(1));x.listen_completed=listenState.completed?1:0;x.play_count=listenState.playCount;
+  x.post_valence=post.valence;x.post_arousal=post.arousal;x.post_dominance=post.dominance;x.stai_post_total=staiEnabled()?staiScore(answers.staiPost):"";
+  x.delta_valence=Number((post.valence-pre.valence).toFixed(2));x.delta_arousal=Number((post.arousal-pre.arousal).toFixed(2));x.delta_dominance=Number((post.dominance-pre.dominance).toFixed(2));
+  const sp=staiScore(answers.staiPre),spo=staiScore(answers.staiPost);x.stai_delta=(staiEnabled()&&sp!==null&&spo!==null)?spo-sp:"";
+  x.pre_hrv=num($("preHrv").value);x.post_hrv=num($("postHrv").value);
+  x.pre_sbp=num($("preSbp").value);x.post_sbp=num($("postSbp").value);x.pre_dbp=num($("preDbp").value);x.post_dbp=num($("postDbp").value);
+  x.pre_eda=num($("preEda").value);x.post_eda=num($("postEda").value);
+  x.liking=r.liking;x.fit=r.fit;x.comfort=r.comfort;x.familiarity=r.familiarity;x.comment=$("commentInput").value.trim();x.app_version=APP_VERSION;
+  return x;}
+function loadAll(){try{return JSON.parse(localStorage.getItem(LS_KEY))||[];}catch(e){return[];}}
+function saveAll(a){localStorage.setItem(LS_KEY,JSON.stringify(a));}
+function downloadBlob(b,n){const u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download=n;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(u);a.remove();},300);}
+function toCsv(rows){const esc=v=>{if(v===null||v===undefined)return"";const s=String(v).replace(/"/g,'""');return/[",\n]/.test(s)?'"'+s+'"':s;};
+  return "﻿"+CONFIG.csvCols.join(",")+"\n"+rows.map(r=>CONFIG.csvCols.map(c=>esc(r[c])).join(",")).join("\n");}
+function finishTrial(){const rec=buildRecord();const all=loadAll();all.push(rec);saveAll(all);trial.lastRecord=rec;
+  const toneCN={gong:"宫音",shang:"商音",jue:"角音",zhi:"徵音",yu:"羽音"};
+  const rows=[["试验编号",rec.trial_id],["被试 / 轮次",rec.subject_id+" · 第 "+rec.trial_no+" 轮"],
+    ["五音 / BPM",toneCN[rec.five_tone]+" · "+rec.bpm+" BPM"],["音频来源",rec.audio_source==="musicgen"?"MusicGen 预生成":"网页合成兜底"],
+    ["效价 ΔV / 唤醒 ΔA",rec.delta_valence+" / "+rec.delta_arousal],
+    ["STAI-S 焦虑分 前→后",rec.stai_pre_total+" → "+rec.stai_post_total+"（Δ="+rec.stai_delta+"）"],
+    ["有效聆听",rec.listen_seconds+" 秒（播放 "+rec.play_count+" 次）"]];
+  $("finalSummary").innerHTML=rows.map(x=>`<tr><th>${x[0]}</th><td>${x[1]}</td></tr>`).join("");
+  $("dlJson").onclick=()=>downloadBlob(new Blob([JSON.stringify(rec,null,2)],{type:"application/json"}),`${rec.subject_id}_trial${rec.trial_no}_${rec.trial_id.slice(0,8)}.json`);}
+function resetAnswersOnly(){answers.pre={};answers.post={};answers.rating={};answers.staiPre={};answers.staiPost={};
+  document.querySelectorAll(".sam-opt.sel,.likert button.sel").forEach(b=>b.classList.remove("sel"));
+  ["stateInput","goalInput","activityInput","commentInput","preHrv","postHrv","preSbp","postSbp","preDbp","postDbp","preEda","postEda"].forEach(id=>$(id).value="");
+  $("listenAudio").removeAttribute("src");renderStai("preStai",answers.staiPre);renderStai("postStai",answers.staiPost);resetListenMeter();}
+function startTrial(n){trial.trialId=uuid();trial.trialNo=n||1;trial.condition="matched";trial.tsStart=nowIso();maxReached=0;resetAnswersOnly();show(0);}
+function fullReset(){if(!confirm("清空当前作答并回到知情同意页（已存档数据不受影响）？"))return;
+  ["subjectId","age","commentInput","preHrv","postHrv","preSbp","postSbp","preDbp","postDbp","preEda","postEda"].forEach(id=>$(id).value="");
+  ["gender","musicTraining","stateInput","goalInput","activityInput"].forEach(id=>$(id).value="");resetAnswersOnly();showConsent();}
 
-        return [rhythm, volume, instrument, description];
-    }
+/* =====================================================================
+ * 研究者面板
+ * ===================================================================*/
+function renderCfgView(){
+  const sr=Object.entries(CONFIG.stateVA).map(([k,v])=>`<tr><td>${k}</td><td>${v[0]}</td><td>${v[1]}</td></tr>`).join("");
+  const gr=Object.entries(CONFIG.goalAdjust).map(([k,v])=>`<tr><td>${k}</td><td>${v.v}</td><td>${v.a}</td></tr>`).join("");
+  const tr=CONFIG.valenceTone.map(r=>`<tr><td>&lt;${r.max}</td><td>${r.tone}</td><td>${r.element}/${r.organ}</td></tr>`).join("");
+  const br=CONFIG.arousalBpm.map(r=>`<tr><td>&lt;${r.max}</td><td>${r.bpm}</td></tr>`).join("");
+  $("cfgView").innerHTML=`<div class="cfg-card"><h3>状态→初始 V/A</h3><table><tr><th>状态</th><th>V</th><th>A</th></tr>${sr}</table></div>
+    <div class="cfg-card"><h3>目标→ΔV/ΔA</h3><table><tr><th>目标</th><th>ΔV</th><th>ΔA</th></tr>${gr}</table></div>
+    <div class="cfg-card"><h3>效价→五音/五行/脏腑</h3><table><tr><th>V</th><th>五音</th><th>五行/脏</th></tr>${tr}</table></div>
+    <div class="cfg-card"><h3>唤醒→BPM</h3><table><tr><th>A</th><th>BPM</th></tr>${br}</table></div>`;}
+function renderTrialList(){const all=loadAll();$("trialCount").textContent=all.length;const box=$("trialList");
+  if(!all.length){box.innerHTML="<div class='trial-row'>暂无记录</div>";return;}
+  box.innerHTML=all.slice().reverse().map(r=>`<div class="trial-row"><span><b>${r.subject_id}</b>·第${r.trial_no}轮·${r.five_tone}/${r.bpm}·ΔV${r.delta_valence}·STAI ${r.stai_pre_total}→${r.stai_post_total}·${r.audio_source}</span><span class="tid">${r.trial_id.slice(0,13)}…</span></div>`).join("");}
+function bindResearcher(){
+  $("toResearcher").onclick=()=>{$("participantView").style.display="none";$("researcherView").style.display="block";$("cfgStai").checked=staiEnabled();renderCfgView();renderTrialList();window.scrollTo(0,0);};
+  $("toParticipant").onclick=()=>{$("researcherView").style.display="none";$("participantView").style.display="block";window.scrollTo(0,0);};
+  $("cfgStai").onchange=e=>{localStorage.setItem("wuyin_stai",e.target.checked?"1":"0");toast("已保存，刷新页面后生效");};
+  // Theory Mapper
+  $("theoryRun").onclick=()=>{const inp={hr:$("pHr").value,hrv:$("pHrv").value,eda:$("pEda").value,sbp:$("pSbp").value,dbp:$("pDbp").value,spo2:$("pSpo2").value,pattern:$("pPattern").value,organ:$("pOrgan").value,shichen:$("pShichen").value};
+    if(inp.hr===""&&inp.hrv===""&&inp.eda===""){toast("请至少填入一项生理指标");return;}
+    const o=theoryMapper(inp);
+    $("theoryOut").textContent=
+      `输入：HR=${inp.hr||"—"} RMSSD=${inp.hrv||"—"} EDA=${inp.eda||"—"} BP=${inp.sbp||"?"}/${inp.dbp||"?"} SpO2=${inp.spo2||"—"}\n`+
+      `辨证：${inp.pattern||"未指定"} / 调理脏腑=${inp.organ||"未指定"} / ${inp.shichen||"时辰未指定"}\n`+
+      "———— 计算过程 ————\n"+o.steps.map((s,i)=>(i+1)+". "+s).join("\n")+
+      `\n———— 五音控制向量 ————\n调式=${o.toneRow.tone}（${o.toneRow.pinyin}/${o.toneRow.element}/${o.toneRow.organ}），BPM=${o.bpm}，音色=丝竹为主，和弦=平和级进，音量=中低；对应文件 audio/${o.toneRow.pinyin}_${o.bpm}.mp3`;};
+  // V/A 直演
+  $("dbgRun").onclick=()=>{const v=Number($("dbgV").value),a=Number($("dbgA").value);
+    if(isNaN(v)||isNaN(a)||v<1||v>9||a<1||a>9){toast("请输入 1–9 的 V/A");return;}
+    const tr=CONFIG.valenceTone.find(r=>v<r.max)||CONFIG.valenceTone.at(-1),bpm=(CONFIG.arousalBpm.find(r=>a<r.max)||CONFIG.arousalBpm.at(-1)).bpm;
+    $("dbgOut").innerHTML=`V/A <code>(${fmt(v)},${fmt(a)})</code> → <code>${tr.tone}（${tr.pinyin}/${tr.element}/${tr.organ}）</code>，BPM <code>${bpm}</code>，文件 <code>audio/${tr.pinyin}_${bpm}.mp3</code>；${tr.desc}`;};
+  // 客观评估
+  $("objRun").onclick=async()=>{const tone=$("objTone").value,bpm=Number($("objBpm").value);$("objOut").textContent="合成中…";
+    await synthWuyin(tone,bpm,30);const o=objectiveMetrics(lastMelody);
+    $("objOut").innerHTML=`材料：${tone} 调式 / ${bpm} BPM / 试算片段 ${lastMelody.duration}s / ${o.notes} 个音符（正式聆听材料为 ${fmtTime(LISTEN_SECONDS)}）<br>`+
+      `① 五声音阶纯净度 = 落在目标五声调式内音符 ÷ 总音符 = <b>${(o.purity*100).toFixed(1)}%</b><br>`+
+      `② 节奏稳定性：音符起始间隔均值=${o.meanBeat.toFixed(3)}s，变异系数 CV=${o.cv.toFixed(3)}，稳定性 1−CV=<b>${(o.stability*100).toFixed(1)}%</b><br>`+
+      `<span style="color:var(--muted)">MusicGen 真音频请用后端 evaluator.py（librosa 提音高/onset）按同口径计算。</span>`;};
+  $("dlAllCsv").onclick=()=>{const a=loadAll();if(!a.length){toast("暂无记录");return;}downloadBlob(new Blob([toCsv(a)],{type:"text/csv"}),`wuyin_trials_${Date.now()}.csv`);};
+  $("dlAllJson").onclick=()=>{const a=loadAll();if(!a.length){toast("暂无记录");return;}downloadBlob(new Blob([JSON.stringify(a,null,2)],{type:"application/json"}),`wuyin_trials_${Date.now()}.json`);};
+  $("clearAll").onclick=()=>{if(confirm("确定清空本机全部试验记录？不可恢复。")){saveAll([]);renderTrialList();toast("已清空");}};
+  // 生理补录并入最后一条（完成页）
+  $("savePhysio").onclick=()=>{if(!trial.lastRecord){toast("请先提交一条试验记录");return;}
+    const all=loadAll();const idx=all.findIndex(r=>r.trial_id===trial.lastRecord.trial_id);
+    if(idx<0){toast("未找到本次记录");return;}
+    const patch={pre_hrv:num($("preHrv").value),post_hrv:num($("postHrv").value),pre_sbp:num($("preSbp").value),post_sbp:num($("postSbp").value),pre_dbp:num($("preDbp").value),post_dbp:num($("postDbp").value),pre_eda:num($("preEda").value),post_eda:num($("postEda").value)};
+    Object.assign(all[idx],patch);saveAll(all);trial.lastRecord=all[idx];toast("生理指标已并入本次记录");};
+}
 
-    function getToneScale(tone) {
-        const scales = {
-            "宫音": [261.63, 293.66, 329.63, 392.00, 440.00],
-            "商音": [293.66, 329.63, 392.00, 440.00, 523.25],
-            "角音": [329.63, 392.00, 440.00, 523.25, 587.33],
-            "徵音": [392.00, 440.00, 523.25, 587.33, 659.25],
-            "羽音": [440.00, 523.25, 587.33, 659.25, 783.99]
-        };
-
-        return scales[tone] || scales["宫音"];
-    }
-
-    function writeString(view, offset, string) {
-        for (let i = 0; i < string.length; i++) {
-            view.setUint8(offset + i, string.charCodeAt(i));
-        }
-    }
-
-    function createWavBlob(tone, bpm) {
-        const sampleRate = 22050;
-        const durationPerNote = 0.35;
-        const totalNotes = 20;
-        const scale = getToneScale(tone);
-
-        const totalSamples = Math.floor(sampleRate * durationPerNote * totalNotes);
-        const buffer = new ArrayBuffer(44 + totalSamples * 2);
-        const view = new DataView(buffer);
-
-        writeString(view, 0, "RIFF");
-        view.setUint32(4, 36 + totalSamples * 2, true);
-        writeString(view, 8, "WAVE");
-        writeString(view, 12, "fmt ");
-        view.setUint32(16, 16, true);
-        view.setUint16(20, 1, true);
-        view.setUint16(22, 1, true);
-        view.setUint32(24, sampleRate, true);
-        view.setUint32(28, sampleRate * 2, true);
-        view.setUint16(32, 2, true);
-        view.setUint16(34, 16, true);
-        writeString(view, 36, "data");
-        view.setUint32(40, totalSamples * 2, true);
-
-        let offset = 44;
-        let sampleIndex = 0;
-
-        for (let i = 0; i < totalNotes; i++) {
-            const freq = scale[i % scale.length];
-            const noteSamples = Math.floor(sampleRate * durationPerNote);
-            const fadeLength = Math.floor(sampleRate * 0.03);
-
-            for (let n = 0; n < noteSamples && sampleIndex < totalSamples; n++) {
-                const t = n / sampleRate;
-
-                let envelope = 1.0;
-                if (n < fadeLength) {
-                    envelope = n / fadeLength;
-                } else if (n > noteSamples - fadeLength) {
-                    envelope = (noteSamples - n) / fadeLength;
-                }
-
-                let value = 0.28 * envelope * Math.sin(2 * Math.PI * freq * t);
-                value += 0.06 * envelope * Math.sin(2 * Math.PI * freq * 2 * t);
-
-                value = Math.max(-1, Math.min(1, value));
-                view.setInt16(offset, value * 32767, true);
-
-                offset += 2;
-                sampleIndex++;
-            }
-        }
-
-        return new Blob([view], { type: "audio/wav" });
-    }
-
-    function generateMusic() {
-        const userId = document.getElementById("userId").value || "user_001";
-        const state = document.getElementById("state").value;
-        const goal = document.getElementById("goal").value;
-        const activity = document.getElementById("activity").value;
-
-        let [valence, arousal] = stateToVA(state);
-        [valence, arousal] = adjustByGoal(valence, arousal, goal);
-
-        const [tone, element, toneDesc] = mapValenceToWuyin(valence);
-        const bpm = mapArousalToBPM(arousal);
-        const [rhythm, volume, instrument, description] = buildStyleText(state, goal, activity);
-
-        const audioBlob = createWavBlob(tone, bpm);
-        const audioUrl = URL.createObjectURL(audioBlob);
-
-        const now = new Date();
-        const timestamp = now.toISOString().replace(/[-:T.]/g, "").slice(0, 14);
-
-        const record = {
-            time: timestamp,
-            user_id: userId,
-            current_state: state,
-            music_goal: goal,
-            activity: activity,
-            valence: Number(valence.toFixed(2)),
-            arousal: Number(arousal.toFixed(2)),
-            five_tone: tone,
-            element: element,
-            tone_description: toneDesc,
-            bpm: bpm,
-            rhythm_density: rhythm,
-            volume_level: volume,
-            instrument_style: instrument,
-            description: description,
-            note: "公网静态版生成的是五音示例音频；完整 MusicGen 版本保留在本地实验环境中。"
-        };
-
-        const recordText = JSON.stringify(record, null, 4);
-        const recordBlob = new Blob([recordText], { type: "application/json" });
-        const recordUrl = URL.createObjectURL(recordBlob);
-
-        document.getElementById("tone").textContent = tone;
-        document.getElementById("element").textContent = element;
-        document.getElementById("bpm").textContent = bpm + " BPM";
-        document.getElementById("goalShow").textContent = goal;
-
-        document.getElementById("description").textContent =
-            "系统推荐：" + tone + "，风格为" + toneDesc + "。整体音乐倾向：" + description + "。";
-
-        document.getElementById("audioPlayer").src = audioUrl;
-
-        document.getElementById("downloadAudio").href = audioUrl;
-        document.getElementById("downloadAudio").download =
-            userId + "_" + tone + "_" + timestamp + ".wav";
-
-        document.getElementById("downloadRecord").href = recordUrl;
-        document.getElementById("downloadRecord").download =
-            userId + "_" + tone + "_" + timestamp + "_record.json";
-
-        document.getElementById("recordText").textContent = recordText;
-        document.getElementById("result").style.display = "block";
-    }
+/* =====================================================================
+ * 启动
+ * ===================================================================*/
+function init(){
+  renderSam("preSam","pre");renderSam("postSam","post");renderLikert();
+  renderStai("preStai",answers.staiPre);renderStai("postStai",answers.staiPost);
+  bindListenMeter();bindResearcher();
+  $("consentCheck").addEventListener("change",e=>$("consentBtn").disabled=!e.target.checked);
+  $("consentBtn").onclick=()=>startTrial(1);
+  $("btnNext").onclick=nextStep;$("btnPrev").onclick=prevStep;
+  $("nextTrialBtn").onclick=()=>{const n=(trial.trialNo||1)+1;const keep=trial.lastRecord?{sid:trial.lastRecord.subject_id,age:trial.lastRecord.age,g:trial.lastRecord.gender,m:trial.lastRecord.music_training}:null;
+    resetAnswersOnly();startTrial(n);if(keep){$("subjectId").value=keep.sid;$("age").value=keep.age;$("gender").value=keep.g;$("musicTraining").value=keep.m;}toast("已开始第 "+n+" 轮，登记信息已保留");};
+  $("newSubjectBtn").onclick=fullReset;
+  showConsent();
+}
+document.addEventListener("DOMContentLoaded",init);
 </script>
-
 </body>
 </html>
