@@ -274,7 +274,7 @@ details.acc .acc-body{padding:0 0 14px}
     </div>
 
     <div class="footer">
-      个性化五音养生音乐生成与评估系统 · 学术实验版 v3.3（对齐课题执行计划书）· 纯静态离线运行，不向服务器上传数据<br>
+      个性化五音养生音乐生成与评估系统 · 学术实验版 v3.4（对齐课题执行计划书）· 纯静态离线运行，不向服务器上传数据<br>
       <a id="toResearcher">研究者面板（Theory Mapper / 量表配置 / 客观评估 / 数据汇总）</a>
     </div>
   </div>
@@ -374,7 +374,7 @@ details.acc .acc-body{padding:0 0 14px}
 /* =====================================================================
  * 配置层 CONFIG：所有学术规则集中于此，保证可复现（对应 theory_mapper.py）
  * ===================================================================*/
-const APP_VERSION="wuyin-exp-v3.3";
+const APP_VERSION="wuyin-exp-v3.4";
 const LISTEN_SECONDS=120, BASELINE_STEP=3, LS_KEY="wuyin_trials_v3";
 function fmtTime(s){s=Math.max(0,Math.floor(s));return Math.floor(s/60)+":"+String(s%60).padStart(2,"0");}
 
@@ -568,7 +568,11 @@ async function synthWuyin(pinyin,bpm,seconds){
   seconds=seconds||LISTEN_SECONDS;const SR=22050;
   const off=new (window.OfflineAudioContext||window.webkitOfflineAudioContext)(1,SR*seconds,SR);
   const master=off.createGain();master.gain.value=.62;
-  const lp=off.createBiquadFilter();lp.type="lowpass";lp.frequency.value=2600;master.connect(lp);lp.connect(off.destination);
+  // 压缩器 + 2倍补偿增益：压下瞬时峰值、整体抬升平均响度（约为原先200%），最后再峰值归一兜底，不削波
+  const comp=off.createDynamicsCompressor();comp.threshold.value=-20;comp.knee.value=8;comp.ratio.value=4;comp.attack.value=.004;comp.release.value=.22;
+  const makeup=off.createGain();makeup.gain.value=2.0;
+  const lp=off.createBiquadFilter();lp.type="lowpass";lp.frequency.value=2600;
+  master.connect(comp);comp.connect(makeup);makeup.connect(lp);lp.connect(off.destination);
   const scale=CONFIG.scales[pinyin],root=scale[0]/2,pool=[root].concat(scale).concat([scale[0]*2]);
   const beat=60/bpm;let seed=0;for(const c of pinyin)seed=(seed*31+c.charCodeAt(0))%997;
   const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;};
@@ -585,7 +589,7 @@ async function synthWuyin(pinyin,bpm,seconds){
   // 峰值归一化到约 -1dBFS：纯振荡器合成无录音底噪，可直接拉到满幅，保证兜底合成也有足够响度且不削波
   const ch=rendered.getChannelData(0);let pk=1e-6;
   for(let i=0;i<ch.length;i++){const a=Math.abs(ch[i]);if(a>pk)pk=a;}
-  const gain=0.89/pk;
+  const gain=0.95/pk;
   for(let i=0;i<ch.length;i++)ch[i]*=gain;
   lastMelody={pinyin,bpm,onsets,freqs,duration:seconds,scale,pool:pool.slice()};
   return pcmToWav(rendered,SR);
