@@ -274,7 +274,7 @@ details.acc .acc-body{padding:0 0 14px}
     </div>
 
     <div class="footer">
-      个性化五音养生音乐生成与评估系统 · 学术实验版 v3.4（对齐课题执行计划书）· 纯静态离线运行，不向服务器上传数据<br>
+      个性化五音养生音乐生成与评估系统 · 学术实验版 v3.5（MusicGen 五音真音频 · 对齐课题执行计划书）· 作答数据仅保存在本机，不上传服务器<br>
       <a id="toResearcher">研究者面板（Theory Mapper / 量表配置 / 客观评估 / 数据汇总）</a>
     </div>
   </div>
@@ -374,7 +374,7 @@ details.acc .acc-body{padding:0 0 14px}
 /* =====================================================================
  * 配置层 CONFIG：所有学术规则集中于此，保证可复现（对应 theory_mapper.py）
  * ===================================================================*/
-const APP_VERSION="wuyin-exp-v3.4";
+const APP_VERSION="wuyin-exp-v3.5";
 const LISTEN_SECONDS=120, BASELINE_STEP=3, LS_KEY="wuyin_trials_v3";
 function fmtTime(s){s=Math.max(0,Math.floor(s));return Math.floor(s/60)+":"+String(s%60).padStart(2,"0");}
 
@@ -559,10 +559,23 @@ function staiScore(store){
 /* =====================================================================
  * 双引擎：audio/ 真音频优先，Web Audio 五声调式合成兜底（严格按 BPM）
  * ===================================================================*/
-function probeFile(url){return new Promise(res=>{const a=new Audio();let done=false;
-  const fin=ok=>{if(!done){done=true;res(ok?url:null);}};
-  a.addEventListener("canplay",()=>fin(true),{once:true});a.addEventListener("error",()=>fin(false),{once:true});
-  setTimeout(()=>fin(false),1800);a.src=url;});}
+async function probeFile(url){
+  // http(s) 下用 fetch 判定文件是否存在（比媒体元素事件更稳，不受自动播放/预加载策略影响）
+  if(location.protocol==="http:"||location.protocol==="https:"){
+    try{
+      let r=await fetch(url,{method:"HEAD"});
+      if(!r.ok) r=await fetch(url);   // 个别静态服务器不支持 HEAD 时回退 GET
+      return r.ok?url:null;
+    }catch(e){return null;}
+  }
+  // file:// 本地双击打开时 fetch 受限，回退为媒体元素事件探测
+  return await new Promise(res=>{const a=new Audio();let done=false;
+    const fin=ok=>{if(!done){done=true;res(ok?url:null);}};
+    a.addEventListener("loadeddata",()=>fin(true),{once:true});
+    a.addEventListener("canplay",()=>fin(true),{once:true});
+    a.addEventListener("error",()=>fin(false),{once:true});
+    setTimeout(()=>fin(false),4000);a.preload="auto";a.src=url;a.load();});
+}
 let lastMelody=null;
 async function synthWuyin(pinyin,bpm,seconds){
   seconds=seconds||LISTEN_SECONDS;const SR=22050;
