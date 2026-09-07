@@ -274,7 +274,7 @@ details.acc .acc-body{padding:0 0 14px}
     </div>
 
     <div class="footer">
-      个性化五音养生音乐生成与评估系统 · 学术实验版 v3.2（对齐课题执行计划书）· 纯静态离线运行，不向服务器上传数据<br>
+      个性化五音养生音乐生成与评估系统 · 学术实验版 v3.3（对齐课题执行计划书）· 纯静态离线运行，不向服务器上传数据<br>
       <a id="toResearcher">研究者面板（Theory Mapper / 量表配置 / 客观评估 / 数据汇总）</a>
     </div>
   </div>
@@ -374,7 +374,7 @@ details.acc .acc-body{padding:0 0 14px}
 /* =====================================================================
  * 配置层 CONFIG：所有学术规则集中于此，保证可复现（对应 theory_mapper.py）
  * ===================================================================*/
-const APP_VERSION="wuyin-exp-v3.2";
+const APP_VERSION="wuyin-exp-v3.3";
 const LISTEN_SECONDS=120, BASELINE_STEP=3, LS_KEY="wuyin_trials_v3";
 function fmtTime(s){s=Math.max(0,Math.floor(s));return Math.floor(s/60)+":"+String(s%60).padStart(2,"0");}
 
@@ -567,8 +567,8 @@ let lastMelody=null;
 async function synthWuyin(pinyin,bpm,seconds){
   seconds=seconds||LISTEN_SECONDS;const SR=22050;
   const off=new (window.OfflineAudioContext||window.webkitOfflineAudioContext)(1,SR*seconds,SR);
-  const master=off.createGain();master.gain.value=.42;
-  const lp=off.createBiquadFilter();lp.type="lowpass";lp.frequency.value=1700;master.connect(lp);lp.connect(off.destination);
+  const master=off.createGain();master.gain.value=.62;
+  const lp=off.createBiquadFilter();lp.type="lowpass";lp.frequency.value=2600;master.connect(lp);lp.connect(off.destination);
   const scale=CONFIG.scales[pinyin],root=scale[0]/2,pool=[root].concat(scale).concat([scale[0]*2]);
   const beat=60/bpm;let seed=0;for(const c of pinyin)seed=(seed*31+c.charCodeAt(0))%997;
   const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;};
@@ -576,12 +576,17 @@ async function synthWuyin(pinyin,bpm,seconds){
     o.type="triangle";o.frequency.value=f;o2.type="sine";o2.frequency.value=f*2;g2.gain.value=.18;
     g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol,t0+.025);g.gain.exponentialRampToValueAtTime(.0008,t0+dur*.98);
     o.connect(g);o2.connect(g2);g2.connect(g);g.connect(master);o.start(t0);o2.start(t0);o.stop(t0+dur);o2.stop(t0+dur);};
-  (function(){const o=off.createOscillator(),g=off.createGain();o.type="sine";o.frequency.value=root;g.gain.value=.05;o.connect(g);g.connect(master);o.start(0);o.stop(seconds);})();
+  (function(){const o=off.createOscillator(),g=off.createGain();o.type="sine";o.frequency.value=root;g.gain.value=.09;o.connect(g);g.connect(master);o.start(0);o.stop(seconds);})();
   const onsets=[],freqs=[];let idx=1,t=0,bar=0;const durs=[beat*.5,beat,beat,beat*2];
   while(t<seconds-beat*2){const step=[-1,1,-2,1,1,0][Math.floor(rnd()*6)];idx=Math.max(1,Math.min(pool.length-2,idx+step));if(bar%4===0)idx=1;
-    const dur=durs[Math.floor(rnd()*durs.length)];note(t,dur,pool[idx],.16);onsets.push(t);freqs.push(pool[idx]);t+=dur;bar+=dur/beat;}
-  note(t,seconds-t,scale[0],.18);onsets.push(t);freqs.push(scale[0]);
+    const dur=durs[Math.floor(rnd()*durs.length)];note(t,dur,pool[idx],.24);onsets.push(t);freqs.push(pool[idx]);t+=dur;bar+=dur/beat;}
+  note(t,seconds-t,scale[0],.28);onsets.push(t);freqs.push(scale[0]);
   const rendered=await off.startRendering();
+  // 峰值归一化到约 -1dBFS：纯振荡器合成无录音底噪，可直接拉到满幅，保证兜底合成也有足够响度且不削波
+  const ch=rendered.getChannelData(0);let pk=1e-6;
+  for(let i=0;i<ch.length;i++){const a=Math.abs(ch[i]);if(a>pk)pk=a;}
+  const gain=0.89/pk;
+  for(let i=0;i<ch.length;i++)ch[i]*=gain;
   lastMelody={pinyin,bpm,onsets,freqs,duration:seconds,scale,pool:pool.slice()};
   return pcmToWav(rendered,SR);
 }
