@@ -949,6 +949,7 @@ function svgGroupedBar(groups,opts){ // groups:[{label,pre:{m,s},post:{m,s}}]
   opts=opts||{};const W=440,H=260,L=46,R=14,T=18,B=40;
   if(!groups.length)return '<div class="cap">暂无可绘制数据</div>';
   let all=[];groups.forEach(g=>{if(!isNaN(g.pre.m))all.push(g.pre.m-g.pre.s,g.pre.m+g.pre.s);if(!isNaN(g.post.m))all.push(g.post.m-g.post.s,g.post.m+g.post.s);});
+  if(!all.length)return '<div class="cap">暂无可绘制数据（完成实验后自动生成）</div>';
   let lo=Math.min(...all),hi=Math.max(...all);if(lo===hi){lo-=1;hi+=1;}const pad=(hi-lo)*.12;lo-=pad;hi+=pad;
   const X=L,Y=v=>T+(H-T-B)*(1-(v-lo)/(hi-lo));
   let g=`<svg viewBox="0 0 ${W} ${H}" role="img">`;
