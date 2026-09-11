@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>个性化五音养生音乐生成与评估系统 · 学术实验版 v4.0</title>
+<title>个性化五音养生音乐生成与评估系统 · 学术实验版 v4.1</title>
 <style>
 :root{
   --ink:#232826;--primary:#2f6b54;--primary-dark:#245441;--primary-soft:#eaf3ee;
@@ -188,8 +188,8 @@ details.acc .acc-body{padding:0 0 14px}
       <section class="panel" data-consent="1">
         <h2>研究说明与知情同意</h2>
         <p class="lead">请在开始前阅读以下内容</p>
-        <p>本研究评估个性化五音（宫、商、角、徵、羽）养生音乐对情绪状态与自主神经活动的调节作用。采用<b>被试内对照设计</b>，每位被试完成<b>两个阶段</b>（个性化五音段、中性对照段，顺序随机平衡），每阶段包含：聆听前自评与客观心率测量、约 2 分钟聆听、聆听后同套自评与心率测量。全程约 16–20 分钟，两段之间可稍作休息。</p>
-        <p><b>客观指标：</b>使用 Apple Watch 等可穿戴设备在每阶段聆听前后各测量一次<b>静息心率（HR）</b>与<b>心率变异性（HRV-RMSSD）</b>，由主试录入，用于配对统计。</p>
+        <p>本研究评估个性化五音（宫、商、角、徵、羽）养生音乐对情绪状态与自主神经活动的调节作用。采用<b>被试内对照设计（单共同基线）</b>，每位被试完成<b>两个阶段</b>（个性化五音段、中性对照段，顺序随机平衡 AB/BA）：实验最开始先测 <b>1 次共同基线</b>（自评＋客观心率），之后每段约 2 分钟聆听结束后各测 1 次同套自评与心率（全程主观/客观各 3 次，两阶段共用同一听前基线）。全程约 15–18 分钟，两段之间可稍作休息。</p>
+        <p><b>客观指标：</b>使用 Apple Watch 等可穿戴设备，在实验开始时测 1 次共同基线、每段聆听后各测 1 次<b>静息心率（HR）</b>与<b>心率变异性（HRV-RMSSD）</b>，由主试录入；分析时以共同基线为参照分别计算两段变化量并配对比较。</p>
         <p><b>参与原则：</b>完全自愿、全程匿名，可随时退出而无需理由。不采集姓名与联系方式，数据以编号保存，仅用于学术分析。请在安静环境、取舒适坐位，佩戴好设备，音量以舒适为宜。</p>
         <label class="q" style="font-weight:normal;display:flex;gap:8px;align-items:flex-start;margin-top:16px;cursor:pointer">
           <input type="checkbox" id="consentCheck" style="width:auto;margin-top:4px">
@@ -215,21 +215,21 @@ details.acc .acc-body{padding:0 0 14px}
         <input type="text" id="deviceInput" value="Apple Watch Series 11" autocomplete="off">
       </section>
 
-      <!-- 第2步 听前 -->
+      <!-- 第2步 共同基线（全程仅测1次，两阶段共用） -->
       <section class="panel" data-step="1">
-        <h2>第二步 · 聆听前自评与客观测量（基线）</h2>
-        <p class="lead">先完成量表，再按指引测量并录入此刻的 HR / HRV</p>
+        <h2>第二步 · 共同基线：聆听前自评与客观测量（全程只测这 1 次）</h2>
+        <p class="lead">本次结果将作为<b>两个阶段共同的聆听前基线</b>，第二阶段不再重复填写；请先安静坐 3–5 分钟再测，两段听后各再测 1 次（全程主观/客观各 3 次）</p>
         <div id="preSam"></div>
         <div id="preStai"></div>
         <div class="physio">
-          <div class="pt">⌚ 聆听前 · 客观生理（Apple Watch）<span class="req">*</span></div>
+          <div class="pt">⌚ 共同基线 · 客观生理（Apple Watch，全程只测这 1 次听前）<span class="req">*</span></div>
           <div class="pdesc">先安静坐 3–5 分钟再测，两个阶段使用<b>同一 App、同一口径（HRV 取 RMSSD，测满 1 分钟）</b></div>
           <details class="acc" style="margin-top:0"><summary>Apple Watch 测量步骤（点开按步骤做）</summary>
             <div class="acc-body guide-box">
               ① 保持坐位、佩戴贴合，安静 3–5 分钟；<br>
               ② 用「心率」App 或可测 HRV 的第三方 App（如 Heart Analyzer / AutoPulse / Welltory）测满 1 分钟；<br>
-              ③ 读取<b>心率 HR（bpm）</b>与 <b>HRV-RMSSD（ms）</b>，分别填入下方；<br>
-              ④ 本段聆听结束后，用<b>完全相同</b>方式再测一次（第四步之后）。<br>
+              ③ 读取<b>心率 HR（bpm）</b>与 <b>HRV-RMSSD（ms）</b>，分别填入下方（此为两阶段共同基线）；<br>
+              ④ 两段聆听结束后，各用<b>完全相同</b>方式测 1 次听后（全程再测 2 次，听前仅此 1 次）。<br>
               <span style="color:var(--muted)">说明：Apple Watch 不提供皮肤电 EDA，本研究客观指标只取 HR 与 HRV；HRV 数值在不同 App/口径下不可混用。</span>
             </div>
           </details>
@@ -241,6 +241,7 @@ details.acc .acc-body{padding:0 0 14px}
       <section class="panel" data-step="2">
         <h2>第三步 · 当前状态与音乐目标</h2>
         <p class="lead" id="stateLead">系统通过情绪维度与中医五音理论双重映射匹配音乐</p>
+        <div class="guide-box" id="baselineNote" style="display:none;margin-bottom:10px"></div>
         <div id="statePickers">
           <label class="q">你现在的状态是？<span class="req">*</span></label>
           <select id="stateInput"><option value="">请选择</option><option>压力大</option><option>有点低落</option><option>比较疲惫</option><option>普通平稳</option><option>有点兴奋</option><option>心情较好</option></select>
@@ -250,7 +251,7 @@ details.acc .acc-body{padding:0 0 14px}
           <select id="activityInput"><option value="">请选择</option><option>静坐或躺着</option><option>轻微走动</option><option>运动后</option></select>
         </div>
         <div class="guide-box" id="controlStateNote" style="display:none">
-          本阶段为<b>中性对照段</b>：你将听到一段中性声景（非五音音乐），用于与个性化五音段作对照。请保持与上一阶段相同的坐姿与音量，安静聆听即可，无需选择偏好。
+          本阶段为<b>中性对照段</b>：你将听到一段柔和的中性声景（非五音音乐），用于与个性化五音段作对照。每位被试都会固定经历 <b>1 段个性化五音 + 1 段对照</b>（顺序随机平衡），若本阶段是对照，另一阶段即为你的个性化五音段。请保持相同坐姿与音量，安静聆听即可，无需选择偏好。
         </div>
       </section>
 
@@ -276,7 +277,7 @@ details.acc .acc-body{padding:0 0 14px}
       <!-- 第5步 听后 -->
       <section class="panel" data-step="4">
         <h2>第五步 · 聆听后自评与客观测量</h2>
-        <p class="lead">量表与聆听前完全相同；并以相同方式再测一次 HR / HRV</p>
+        <p class="lead">量表与共同基线时完全相同；请在聆听结束后立即以相同方式再测一次 HR / HRV</p>
         <div id="postSam"></div>
         <div id="postStai"></div>
         <div class="physio">
@@ -319,7 +320,7 @@ details.acc .acc-body{padding:0 0 14px}
     </div>
 
     <div class="footer">
-      个性化五音养生音乐生成与评估系统 · 学术实验版 v4.0（被试内对照 · MusicGen 真音频 · HR/HRV 客观验证 · 对齐课题四模块）· 作答数据仅保存在本机，可提交至研究数据库<br>
+      个性化五音养生音乐生成与评估系统 · 学术实验版 v4.1（被试内对照·单共同基线 · 柔和棕噪对照 · MusicGen 真音频 · HR/HRV 客观验证 · 对齐课题四模块）· 作答数据仅保存在本机，可提交至研究数据库<br>
       <a id="toResearcher">研究者面板（系统架构 / 四模块 / 材料档案库 / 闭环评估看板 / 数据管理）</a>
     </div>
   </div>
@@ -361,7 +362,7 @@ details.acc .acc-body{padding:0 0 14px}
           <div class="cfg-card"><h3>前端实验系统（本页）</h3>
             <p style="margin:0;line-height:2">纯静态单文件（HTML/CSS/原生 JS，零外网依赖、无 CDN），GitHub Pages 托管；SAM 自绘图形、STAI-S 自动反向计分；音频真文件优先、Web Audio 五声合成仅作离线兜底；数据存本机并可提交飞书汇总。</p></div>
           <div class="cfg-card"><h3>评估方法（模块4）</h3>
-            <p style="margin:0;line-height:2">主观：SAM(V/A/D) + STAI-S；客观：Apple Watch HR、HRV-RMSSD。被试内五音/对照两阶段、AB/BA 顺序平衡；配对样本 t / Wilcoxon、效应量、主客观相关；正式推断以 SPSS 复核。</p></div>
+            <p style="margin:0;line-height:2">主观：SAM(V/A/D) + STAI-S；客观：Apple Watch HR、HRV-RMSSD。被试内五音/对照两阶段、AB/BA 顺序平衡、单共同基线（听前仅测 1 次，全程主观/客观各 3 次，两段均相对同一基线计变化量）；配对样本 t / Wilcoxon、效应量、主客观相关；正式推断以 SPSS 复核。</p></div>
           <div class="cfg-card"><h3>量表开关</h3>
             <label style="display:flex;gap:8px;align-items:center;font-weight:normal;cursor:pointer"><input type="checkbox" id="cfgStai" checked> 启用 STAI-S（20 题，自动反向计分）</label>
             <p style="margin:8px 0 0;font-size:12.5px;color:var(--muted)">SAM 为必做基线；POMS 需取得授权后在源码配置。改动后刷新生效。</p>
@@ -473,7 +474,7 @@ details.acc .acc-body{padding:0 0 14px}
         </div>
         <div class="chain" id="objOut" style="margin-top:12px">点右侧可对网页合成材料做客观指标试算；MusicGen 真音频同口径指标见材料档案库与后端 librosa 报告。</div>
 
-        <h3 class="sec">① 配对统计（听后 − 听前；HR 预期↓、HRV 预期↑、STAI 预期↓）</h3>
+        <h3 class="sec">① 配对统计（听后 − 共同基线；HR 预期↓、HRV 预期↑、STAI 预期↓）</h3>
         <div class="tbl-wrap"><table class="stat-table" id="statTable"></table></div>
 
         <h3 class="sec">② 前后对比图（均值 + 标准差误差棒）</h3>
@@ -525,7 +526,7 @@ details.acc .acc-body{padding:0 0 14px}
 <script>
 "use strict";
 /* ============================ 配置层（学术规则集中、可复现） ============================ */
-const APP_VERSION="wuyin-exp-v4.0";
+const APP_VERSION="wuyin-exp-v4.1";
 const LISTEN_SECONDS=120, BASELINE_STEP=3, LS_KEY="wuyin_trials_v4";
 const DEVICE_DEFAULT="Apple Watch Series 11";
 function fmtTime(s){s=Math.max(0,Math.floor(s));return Math.floor(s/60)+":"+String(s%60).padStart(2,"0");}
@@ -546,8 +547,8 @@ const CONFIG={
   tcmRules:[
     {match:{pattern:["阳虚质"],hr:"low",bp:"low"},tone:"zhi",reason:"阳虚/心率偏慢/血压偏低 → 徵音属火，补心阳，取较高 BPM"},
     {match:{pattern:["气郁质"],bp:"hi",state:["压力大"]},tone:"jue",reason:"肝郁气滞/压力/血压偏高 → 角音属木，疏肝理气，中速丝竹"}],
-  // 对照设置：pinknoise=柔和粉红噪声（默认）/ silent=静坐静音 / unmatched=非匹配五音
-  controlType:"pinknoise",
+  // 对照设置：brown=柔和棕噪声（默认，低频低沉最不刺耳）/ pink=粉红噪声 / silent=静坐静音 / unmatched=非匹配五音
+  controlType:"brown",
   // 在线研究数据库默认表单（飞书多维表格收集表，已设为互联网匿名可填）；数据管理中可被本地覆盖
   feishuFormDefault:"https://my.feishu.cn/share/base/shrcn4sxa7tY8l8pgBmLv5hlWHp",
   sam:[
@@ -592,7 +593,7 @@ const MATERIALS=[
  ["yu_72","羽音","yu","水","肾",72,20260920,0.101,0.25,"deep tranquil descending like water, guqin timbre, slow steady 72 bpm, continuous, sizhu, always present, no vocals/lyrics/drums/percussion/western synth"],
  ["yu_88","羽音","yu","水","肾",88,20260921,0.0866,0.25,"deep tranquil, guqin timbre, gently flowing 88 bpm, continuous, sizhu, always present, no vocals/lyrics/drums/percussion/western synth"]
 ];
-const STEP_TITLES=["被试登记","听前自评+测量","状态目标","聆听","听后自评+测量","声音评价","完成"];
+const STEP_TITLES=["被试登记","共同基线(仅1次)","状态目标","聆听","听后自评+测量","声音评价","完成"];
 const ENABLE_STAI = !new URLSearchParams(location.search).has("nostai");
 
 /* ============================ 工具 ============================ */
@@ -654,6 +655,8 @@ function samArousal(v){const r=2+(v-1)/8*9;return `<svg viewBox="0 0 48 48" fill
 function samDominance(v){const h=10+(v-1)/8*16;return `<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="24" cy="${40-h-5}" r="5"/><path d="M24 ${40-h}v${h}M24 ${40-h+5}l-7 7M24 ${40-h+5}l7 7"/></svg>`;}
 const SAM_DRAW={valence:samFace,arousal:samArousal,dominance:samDominance};
 const answers={pre:{},post:{},rating:{},staiPre:{},staiPost:{}};
+// 共同基线：全程只在最开始测 1 次（SAM+STAI+HR+HRV），两阶段共用，听后各测 1 次（全程主观/客观各 3 次）
+const baseline={sam:{},stai:{},hr:"",hrv:""};
 function renderSam(cid,phase){const box=$(cid);box.innerHTML="";
   CONFIG.sam.forEach(dim=>{let opts="";for(let n=1;n<=9;n++)opts+=`<button type="button" class="sam-opt" data-dim="${dim.key}" data-val="${n}">${SAM_DRAW[dim.key](n)}<span class="n">${n}</span></button>`;
     const b=document.createElement("div");b.className="sam-block";
@@ -717,25 +720,37 @@ async function synthWuyin(pinyin,bpm,seconds){
   lastMelody={pinyin,bpm,onsets,freqs,duration:seconds,scale,pool:pool.slice()};
   return pcmToWav(rendered,SR);
 }
-/* 中性对照：柔和粉红噪声（Voss-McCartney 近似 + 低通 + 淡入淡出 + 峰值归一） */
-async function synthPinkNoise(seconds){
+/* 中性对照声：brown=柔和棕噪声(默认,功率谱1/f²,能量集中低频,听感低沉最不刺耳) / pink=粉红噪声(1/f)
+   统一后级：深度低通 + 缓慢“呼吸”起伏(弱化恒定噪声的烦躁感) + 4s 首尾淡变 + 低峰值(刻意比五音更柔) */
+async function synthControlNoise(seconds,type){
+  type=type||"brown";
   const SR=22050;const off=new (window.OfflineAudioContext||window.webkitOfflineAudioContext)(1,SR*seconds,SR);
   const len=SR*seconds;const buf=off.createBuffer(1,len,SR);const d=buf.getChannelData(0);
-  let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
-  for(let i=0;i<len;i++){const w=Math.random()*2-1;
-    b0=0.99886*b0+w*0.0555179;b1=0.99332*b1+w*0.0750759;b2=0.969*b2+w*0.153852;b3=0.8665*b3+w*0.3104856;
-    b4=0.55*b4+w*0.5329522;b5=-0.7616*b5-w*0.016898;b6=w*0.5362;
-    d[i]=(b0+b1+b2+b3+b4+b5+b6+w*0.5362)*0.11;}
+  if(type==="pink"){
+    let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+    for(let i=0;i<len;i++){const w=Math.random()*2-1;
+      b0=0.99886*b0+w*0.0555179;b1=0.99332*b1+w*0.0750759;b2=0.969*b2+w*0.153852;b3=0.8665*b3+w*0.3104856;
+      b4=0.55*b4+w*0.5329522;b5=-0.7616*b5-w*0.016898;b6=w*0.5362;
+      d[i]=(b0+b1+b2+b3+b4+b5+b6+w*0.5362)*0.11;}
+  }else{ // 棕噪声 Brownian：对白噪声积分得到 1/f² 谱，低频为主，听感如远雷/缓流，放松研究常用，比白/粉噪更柔
+    let last=0;for(let i=0;i<len;i++){const w=Math.random()*2-1;last=(last+0.02*w)/1.002;d[i]=last*3.2;}
+  }
   const src=off.createBufferSource();src.buffer=buf;
-  const lp=off.createBiquadFilter();lp.type="lowpass";lp.frequency.value=850;lp.Q.value=.3;
-  const g=off.createGain();const fi=2.5,fo=3.0;g.gain.setValueAtTime(0,0);g.gain.linearRampToValueAtTime(1,fi);
-  g.gain.setValueAtTime(1,Math.max(fi,seconds-fo));g.gain.linearRampToValueAtTime(0,seconds);
-  src.connect(lp);lp.connect(g);g.connect(off.destination);src.start(0);
+  const lp=off.createBiquadFilter();lp.type="lowpass";lp.Q.value=.3;lp.frequency.value=type==="pink"?650:480;
+  const breath=off.createGain();breath.gain.value=.82; // 缓慢呼吸起伏，避免机械恒定噪声让人更烦躁
+  const lfo=off.createOscillator();lfo.type="sine";lfo.frequency.value=1/9;const lfoAmt=off.createGain();lfoAmt.gain.value=.18;
+  lfo.connect(lfoAmt);lfoAmt.connect(breath.gain);lfo.start(0);lfo.stop(seconds+0.1);
+  const env=off.createGain();const fi=4,fo=4;env.gain.setValueAtTime(0,0);env.gain.linearRampToValueAtTime(1,fi);
+  env.gain.setValueAtTime(1,Math.max(fi,seconds-fo));env.gain.linearRampToValueAtTime(0,seconds);
+  src.connect(lp);lp.connect(breath);breath.connect(env);env.connect(off.destination);src.start(0);
   const rendered=await off.startRendering();const ch=rendered.getChannelData(0);let pk=1e-6;
   for(let i=0;i<ch.length;i++){const a=Math.abs(ch[i]);if(a>pk)pk=a;}
-  const k=.5/pk;for(let i=0;i<ch.length;i++)ch[i]*=k; // 对照声刻意更柔，峰值0.5
+  const target=type==="pink"?0.32:0.30; // 对照声峰值刻意压低（五音为0.891），不喧宾夺主、不刺耳
+  const k=target/pk;for(let i=0;i<ch.length;i++)ch[i]*=k;
   return pcmToWav(rendered,SR);
 }
+async function synthPinkNoise(seconds){return synthControlNoise(seconds,"pink");} // 兼容旧调用
+async function synthBrownNoise(seconds){return synthControlNoise(seconds,"brown");}
 function pcmToWav(ab,sr){const n=ab.length,data=ab.getChannelData(0),buf=new ArrayBuffer(44+n*2),v=new DataView(buf);
   const ws=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};
   ws(0,"RIFF");v.setUint32(4,36+n*2,!0);ws(8,"WAVE");ws(12,"fmt ");v.setUint32(16,16,!0);v.setUint16(20,1,!0);v.setUint16(22,1,!0);
@@ -764,7 +779,7 @@ function show(step){current=step;
   document.querySelector("section.panel[data-consent]").classList.remove("show");
   document.querySelectorAll("section.panel[data-step]").forEach(p=>p.classList.toggle("show",Number(p.dataset.step)===step));
   $("stepNav").style.display=step===-1?"none":"flex";maxReached=Math.max(maxReached,step);
-  $("btnPrev").disabled=step<=0;
+  $("btnPrev").disabled=step<=0||((trial.trialNo||1)>=2&&step<=2);
   $("btnNext").textContent=step===6?"已是最后一步":step===5?"提交本阶段记录":"下一步";
   $("btnNext").disabled=(step===6)||(step===3&&!listenState.completed);
   renderStepper();applyLock();window.scrollTo(0,0);}
@@ -775,7 +790,8 @@ function renderPhaseStrip(){
   $("phaseStrip").style.display="flex";
   const no=trial.trialNo||1;$("phaseLabel").textContent=`阶段 ${no}/2 · ${condCN(trial.condition)}`;
   const pill=$("phasePill");pill.className="pill "+trial.condition;pill.textContent=trial.condition==="matched"?"五音音乐":"中性对照";
-  $("phaseHint").textContent=`顺序：${trial.phaseOrder.map(condCN).join(" → ")}`;
+  const other=trial.phaseOrder.find(c=>c!==trial.condition);
+  $("phaseHint").textContent=`每位被试固定 2 段（1 段五音 + 1 段对照），顺序：${trial.phaseOrder.map(condCN).join(" → ")}｜本阶段＝${condCN(trial.condition)}，另一阶段＝${condCN(other)}`;
 }
 function validate(step){
   if(step===0){if(!$("subjectId").value.trim())return"请填写被试编号";const a=Number($("age").value);
@@ -811,19 +827,22 @@ async function enterListen(){
     $("rSource").innerHTML=currentAudio.source==="musicgen"?"<span class='source-tag musicgen'>MusicGen 预生成音频</span>":"<span class='source-tag websynth'>网页合成兜底</span>";
   }else{
     // 对照段
-    $("rTone").textContent="—";$("rElement").textContent="对照";$("mapChain").textContent="对照段不做个性化五音映射，用于控制“单纯聆听/声音存在”等非特异效应。";
-    const ct=localStorage.getItem("wuyin_control_type")||CONFIG.controlType;trial.controlType=ct;
+    $("rTone").textContent="—";$("rElement").textContent="对照";$("mapChain").textContent="对照段不做个性化五音映射，用于控制“单纯聆听/声音存在”等非特异效应。每位被试都会经历 1 段个性化五音 + 1 段对照，两段顺序随机平衡（AB/BA）。";
+    let ct=localStorage.getItem("wuyin_control_type")||CONFIG.controlType;if(ct==="pinknoise")ct="pink";trial.controlType=ct;
+    const noiseTag=ct==="pink"?"粉红噪声对照（1/f）":"柔和棕噪声对照（1/f²·低频）";
+    const noiseFile=ct==="pink"?"pinknoise":"brownnoise";
     if(ct==="silent"){audio.removeAttribute("src");currentAudio={source:"control",file:"silent"};$("rSource").innerHTML="<span class='source-tag control'>静坐静音对照</span>";}
     else if(ct==="unmatched"){
       // 非匹配五音：随机选与“当前状态应得调式”不同的一首真音频
       const state=$("stateInput").value;const m=computeMapping(state||"普通平稳",$("goalInput").value||"放松减压");
       const others=CONFIG.valenceTone.filter(t=>t.pinyin!==m.toneRow.pinyin);const pick=others[Math.floor(Math.random()*others.length)];
       let found=null;for(const ext of ["mp3","wav"]){found=await probeFile(`audio/${pick.pinyin}_72.${ext}`);if(found)break;}
-      if(found){currentAudio={source:"control",file:found};audio.src=found;}else{const bl=await synthPinkNoise(LISTEN_SECONDS);currentAudio={source:"control",file:"pinknoise"};audio.src=URL.createObjectURL(bl);}
+      if(found){currentAudio={source:"control",file:found};audio.src=found;}else{const bl=await synthBrownNoise(LISTEN_SECONDS);currentAudio={source:"control",file:"brownnoise"};audio.src=URL.createObjectURL(bl);}
       $("rSource").innerHTML="<span class='source-tag control'>非匹配五音对照</span>";
     }else{
-      const bl=await synthPinkNoise(LISTEN_SECONDS);currentAudio={source:"control",file:"pinknoise"};audio.src=URL.createObjectURL(bl);
-      $("rSource").innerHTML="<span class='source-tag control'>粉红噪声对照</span>";
+      const bl=ct==="pink"?await synthPinkNoise(LISTEN_SECONDS):await synthBrownNoise(LISTEN_SECONDS);
+      currentAudio={source:"control",file:noiseFile};audio.src=URL.createObjectURL(bl);
+      $("rSource").innerHTML=`<span class='source-tag control'>${noiseTag}</span>`;
     }
   }
   resetListenMeter();
@@ -847,29 +866,34 @@ function startSilentTimer(){if(trial.condition==="control"&&(localStorage.getIte
     if(listenState.accumulated>LISTEN_SECONDS)listenState.accumulated=LISTEN_SECONDS;
     $("listenSec").textContent=fmtTime(listenState.accumulated);$("listenBar").style.width=listenState.accumulated/LISTEN_SECONDS*100+"%";
     if(listenState.accumulated>=LISTEN_SECONDS&&!listenState.completed){listenState.completed=true;$("listenLockTip").textContent="静坐计时完成，可以进入下一步。";if(current===3)$("btnNext").disabled=false;toast("对照静坐完成");}},250);}}
+function captureBaseline(){baseline.sam={...answers.pre};baseline.stai={...answers.staiPre};
+  baseline.hr=$("preHr")?$("preHr").value:"";baseline.hrv=$("preHrv")?$("preHrv").value:"";
+  try{localStorage.setItem("wuyin_baseline_"+$("subjectId").value.trim(),JSON.stringify(baseline));}catch(e){}}
+function baselineLine(){const s=staiScore(baseline.stai);return `已沿用实验开始时的共同基线：HR ${baseline.hr||"—"} bpm ／ HRV-RMSSD ${baseline.hrv||"—"} ms ／ STAI-S ${s===null?"—":s}（两阶段共用，全程只测这一次听前）`;}
 function nextStep(){const err=validate(current);if(err){toast(err);return;}
   if(current===5){finishTrial();show(6);return;}
+  if(current===1)captureBaseline();
   const go=current+1;if(go===BASELINE_STEP)enterListen().then(()=>startSilentTimer());show(go);}
-function prevStep(){if(current>0)show(current-1);}
+function prevStep(){if((trial.trialNo||1)>=2&&current<=2)return;if(current>0)show(current-1);}
 
 /* ============================ 数据层 ============================ */
-function buildRecord(){const m=trial.mapping,pre=answers.pre,post=answers.post,r=answers.rating,x={};
+function buildRecord(){const m=trial.mapping,pre=baseline.sam,post=answers.post,r=answers.rating,x={};
   x.trial_id=trial.trialId;x.subject_id=$("subjectId").value.trim();x.age=num($("age").value);x.gender=$("gender").value;x.music_training=$("musicTraining").value;
   x.phase_order=trial.phaseOrder.join(">");x.trial_no=trial.trialNo;x.condition=trial.condition;x.control_type=trial.condition==="control"?(trial.controlType||CONFIG.controlType):"";
   x.ts_start=trial.tsStart;x.ts_end=nowIso();
-  x.pre_valence=pre.valence;x.pre_arousal=pre.arousal;x.pre_dominance=pre.dominance;x.stai_pre_total=staiEnabled()?staiScore(answers.staiPre):"";
+  x.pre_valence=pre.valence;x.pre_arousal=pre.arousal;x.pre_dominance=pre.dominance;x.stai_pre_total=staiEnabled()?staiScore(baseline.stai):"";
   x.state_input=$("stateInput").value;x.goal_input=$("goalInput").value;x.activity_input=$("activityInput").value;
   if(m){x.va_initial_v=Number(fmt(m.vaInitial[0]));x.va_initial_a=Number(fmt(m.vaInitial[1]));x.va_adjusted_v=Number(fmt(m.vaAdjusted[0]));x.va_adjusted_a=Number(fmt(m.vaAdjusted[1]));
     x.five_tone=m.toneRow.pinyin;x.element=m.toneRow.en;x.organ=m.toneRow.organ;x.bpm=m.bpm;}else{x.va_initial_v="";x.va_initial_a="";x.va_adjusted_v="";x.va_adjusted_a="";x.five_tone="";x.element="";x.organ="";x.bpm="";}
   x.audio_source=currentAudio.source;x.audio_file=currentAudio.file||"";
   x.listen_seconds=Number(listenState.accumulated.toFixed(1));x.listen_completed=listenState.completed?1:0;x.play_count=listenState.playCount;
-  x.pre_hr_bpm=num($("preHr").value);x.post_hr_bpm=num($("postHr").value);x.pre_hrv_ms=num($("preHrv").value);x.post_hrv_ms=num($("postHrv").value);
+  x.pre_hr_bpm=num(baseline.hr);x.post_hr_bpm=num($("postHr").value);x.pre_hrv_ms=num(baseline.hrv);x.post_hrv_ms=num($("postHrv").value);
   x.hr_delta=(x.pre_hr_bpm!==""&&x.post_hr_bpm!=="")?Number((x.post_hr_bpm-x.pre_hr_bpm).toFixed(2)):"";
   x.hrv_delta=(x.pre_hrv_ms!==""&&x.post_hrv_ms!=="")?Number((x.post_hrv_ms-x.pre_hrv_ms).toFixed(2)):"";
   x.device=($("deviceInput")&&$("deviceInput").value||DEVICE_DEFAULT);x.hrv_metric="RMSSD";
   x.post_valence=post.valence;x.post_arousal=post.arousal;x.post_dominance=post.dominance;x.stai_post_total=staiEnabled()?staiScore(answers.staiPost):"";
   x.delta_valence=Number((post.valence-pre.valence).toFixed(2));x.delta_arousal=Number((post.arousal-pre.arousal).toFixed(2));x.delta_dominance=Number((post.dominance-pre.dominance).toFixed(2));
-  const sp=staiScore(answers.staiPre),spo=staiScore(answers.staiPost);x.stai_delta=(staiEnabled()&&sp!==null&&spo!==null)?spo-sp:"";
+  const sp=staiScore(baseline.stai),spo=staiScore(answers.staiPost);x.stai_delta=(staiEnabled()&&sp!==null&&spo!==null)?spo-sp:"";
   x.liking=r.liking;x.fit=r.fit;x.comfort=r.comfort;x.familiarity=r.familiarity;x.comment=$("commentInput").value.trim();x.app_version=APP_VERSION;
   return x;}
 function loadAll(){try{return JSON.parse(localStorage.getItem(LS_KEY))||[];}catch(e){return[];}}
@@ -887,10 +911,10 @@ function finishTrial(){const rec=buildRecord();const all=loadAll();all.push(rec)
   const rows=[["阶段",condCN(rec.condition)+"（第 "+rec.trial_no+" / 2 阶段，顺序 "+rec.phase_order+"）"],
     ["五音 / BPM",rec.five_tone?(toneCN[rec.five_tone]+" · "+rec.bpm+" BPM"):"—（对照）"],
     ["音频来源",({musicgen:"MusicGen 预生成",websynth:"网页合成兜底",control:"中性对照"})[rec.audio_source]||rec.audio_source],
-    ["HR 前→后（Δ）",`${rec.pre_hr_bpm} → ${rec.post_hr_bpm} bpm（Δ=${rec.hr_delta}）`],
-    ["HRV 前→后（Δ）",`${rec.pre_hrv_ms} → ${rec.post_hrv_ms} ms（Δ=${rec.hrv_delta}）`],
-    ["效价 ΔV / 唤醒 ΔA",rec.delta_valence+" / "+rec.delta_arousal],
-    ["STAI-S 前→后（Δ）",rec.stai_pre_total+" → "+rec.stai_post_total+"（Δ="+rec.stai_delta+"）"],
+    ["HR 共同基线→听后（Δ）",`${rec.pre_hr_bpm} → ${rec.post_hr_bpm} bpm（Δ=${rec.hr_delta}）`],
+    ["HRV 共同基线→听后（Δ）",`${rec.pre_hrv_ms} → ${rec.post_hrv_ms} ms（Δ=${rec.hrv_delta}）`],
+    ["效价 ΔV / 唤醒 ΔA（相对共同基线）",rec.delta_valence+" / "+rec.delta_arousal],
+    ["STAI-S 共同基线→听后（Δ）",rec.stai_pre_total+" → "+rec.stai_post_total+"（Δ="+rec.stai_delta+"）"],
     ["有效聆听",rec.listen_seconds+" 秒（播放 "+rec.play_count+" 次）"]];
   $("finalSummary").innerHTML=rows.map(x=>`<tr><th>${x[0]}</th><td>${x[1]}</td></tr>`).join("");
   $("finishLead").textContent=rec.trial_no>=2?"两阶段均已完成，感谢参与！":"本阶段已完成，可继续下一阶段（同一被试）";
@@ -902,18 +926,30 @@ function resetAnswersOnly(){answers.pre={};answers.post={};answers.rating={};ans
   document.querySelectorAll(".sam-opt.sel,.likert button.sel").forEach(b=>b.classList.remove("sel"));
   ["stateInput","goalInput","activityInput","commentInput","preHr","postHr","preHrv","postHrv"].forEach(id=>{if($(id))$(id).value="";});
   $("listenAudio").removeAttribute("src");renderStai("preStai",answers.staiPre);renderStai("postStai",answers.staiPost);resetListenMeter();}
+// 进入下一阶段：只清“听后/评价/本阶段状态”，保留实验开始时的共同基线（听前不再重测）
+function resetStageAnswers(){answers.post={};answers.rating={};answers.staiPost={};
+  document.querySelectorAll("#postSam .sam-opt.sel,.likert button.sel").forEach(b=>b.classList.remove("sel"));
+  ["stateInput","goalInput","activityInput","commentInput","postHr","postHrv"].forEach(id=>{if($(id))$(id).value="";});
+  $("listenAudio").removeAttribute("src");renderStai("postStai",answers.staiPost);resetListenMeter();}
 function startTrial(n,keep){
   const sid=$("subjectId").value.trim()||(keep?keep.sid:"");
   trial.trialId=uuid();trial.trialNo=n||1;trial.tsStart=nowIso();
   trial.phaseOrder=orderForSubject(sid);trial.condition=trial.phaseOrder[(n||1)-1];
   trial.controlType=localStorage.getItem("wuyin_control_type")||CONFIG.controlType;
-  maxReached=0;resetAnswersOnly();
+  const stage2=(n||1)===2;
+  if(stage2){resetStageAnswers();
+    if(!Object.keys(baseline.sam).length){try{const saved=JSON.parse(localStorage.getItem("wuyin_baseline_"+sid)||"null");if(saved){baseline.sam=saved.sam||{};baseline.stai=saved.stai||{};baseline.hr=saved.hr||"";baseline.hrv=saved.hrv||"";}}catch(e){}}
+    answers.pre={...baseline.sam};answers.staiPre={...baseline.stai};}
+  else{maxReached=0;resetAnswersOnly();baseline.sam={};baseline.stai={};baseline.hr="";baseline.hrv="";}
   // 对照段隐藏状态选择
   const isMatched=trial.condition==="matched";
   $("statePickers").style.display=isMatched?"block":"none";$("controlStateNote").style.display=isMatched?"none":"block";
+  if($("baselineNote")){$("baselineNote").style.display=stage2?"block":"none";if(stage2)$("baselineNote").textContent=baselineLine();}
   $("stateLead").textContent=isMatched?"系统通过情绪维度与中医五音理论双重映射匹配音乐":"对照段无需选择偏好，保持与五音段相同状态即可";
   if(keep){$("subjectId").value=keep.sid;$("age").value=keep.age;$("gender").value=keep.g;$("musicTraining").value=keep.m;if($("deviceInput"))$("deviceInput").value=keep.device||DEVICE_DEFAULT;}
-  renderPhaseStrip();show(0);
+  renderPhaseStrip();
+  if(stage2){maxReached=2;show(2);toast("已进入第二阶段：沿用实验开始时的共同基线，本阶段只需在聆听后测量一次");}
+  else show(0);
 }
 function fullReset(){if(!confirm("清空当前作答并回到知情同意页（已存档数据不受影响）？"))return;
   ["subjectId","age","commentInput"].forEach(id=>$(id).value="");["gender","musicTraining"].forEach(id=>$(id).value="");
@@ -1129,7 +1165,7 @@ function init(){
   $("consentBtn").onclick=()=>startTrial(1);
   $("btnNext").onclick=nextStep;$("btnPrev").onclick=prevStep;
   $("nextTrialBtn").onclick=()=>{const keep=trial.lastRecord?{sid:trial.lastRecord.subject_id,age:trial.lastRecord.age,g:trial.lastRecord.gender,m:trial.lastRecord.music_training,device:trial.lastRecord.device}:null;
-    resetAnswersOnly();startTrial((trial.trialNo||1)+1,keep);toast("已进入下一阶段，登记信息与设备已保留");};
+    startTrial((trial.trialNo||1)+1,keep);};
   $("newSubjectBtn").onclick=fullReset;
   showConsent();
 }
